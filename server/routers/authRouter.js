@@ -15,6 +15,16 @@ authRouter.post('/join', (req, res)=>{
    })
 })
 
+authRouter.post('/idcheck', (req, res)=>{
+    const userId = req.body.userId
+    db.query("SELECT * FROM membertbl WHERE userId=?", [userId], (err, result)=>{
+        if (err) {
+            throw err
+        } else {
+            res.send(result)
+        }
+    })
+ })
 
 
 export default authRouter;

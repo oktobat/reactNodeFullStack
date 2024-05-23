@@ -22,8 +22,8 @@ const JoinSectionBlock = styled.div`
 
 const JoinSection = () => {
     const dispatch = useDispatch()
-    const members = useSelector(state=>state.members.members)
-
+    
+    const [message, setMessage] = useState("")
     const navigate = useNavigate()
     const userIdRef = useRef("")
     const userPwRef = useRef("")
@@ -71,10 +71,10 @@ const JoinSection = () => {
             return
         }
 
-        // if (!idCheck(userInfo.userId)) {
-        //     return false;
-        // }
-
+        if (!idCheck(userInfo.userId)) {
+            alert("중복된 아이디입니다.")
+            return
+        }
 
         const addMember = {userId:userInfo.userId, userPw:userInfo.userPw, userIrum:userInfo.userIrum, handphone:userInfo.handphone, zipCode:userInfo.zipCode, addr1:userInfo.addr1, addr2:userInfo.addr2}
         axios
@@ -92,21 +92,18 @@ const JoinSection = () => {
         .catch(err=>console.log(err.toJSON()))
     }
     
-    // const idCheck = (value)=>{
-    //     let duplicate = members.find(item=>item.userId==value)
-    //     console.log(duplicate)
-    //     if (duplicate) {
-    //         alert("중복된 아이디입니다.");
-    //         userIdRef.current.focus();
-    //         return false
-    //     } else {
-    //         return true
-    //     }
-    // }
-
-    useEffect(()=>{
-        
-    }, [])
+    const idCheck = (value)=>{
+        axios.post("http://localhost:8001/auth/idcheck", {userId:value})
+        .then((res)=>{
+            console.log(res)   
+            if (res.data[0]) {
+                setMessage("중복된 아이디입니다.")
+            } else {
+                setMessage("가능한 아이디입니다.")
+            }
+        })
+        .catch(err=>console.log(err.toJSON()))
+    }
 
     
     useEffect(() => {
@@ -150,6 +147,10 @@ const JoinSection = () => {
                         <col />
                     </colgroup>
                     <tbody>
+                        <tr>
+                            <td>아이디 중복체크 :</td>
+                            <td> { message } </td>
+                        </tr>
                         <tr>
                             <td><label htmlFor="userId">이메일 : </label></td>
                             <td><input type="text" name="userId" id="userId" ref={userIdRef} value={userInfo.userId} onChange={(e)=>{handleChange(e); idCheck(e.target.value)}} /></td>
