@@ -25,7 +25,6 @@ const Layout = () => {
     const [loading, setLoading] = useState(false)
 
     useEffect(()=>{
-        dispatch(fetchProducts())
         setTimeout(()=>{ setLoading(true) }, 2000)
     }, [])
 
