@@ -1,7 +1,6 @@
 import React, {useRef, useState, useEffect} from 'react';
 import styled from 'styled-components'
 import {useNavigate} from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
 import axios from 'axios'
 
 const JoinSectionBlock = styled.div`
@@ -19,10 +18,8 @@ const JoinSectionBlock = styled.div`
         button { padding:10px; background:red; color:#fff;  }
     }
 `
-
 const JoinSection = () => {
-    const dispatch = useDispatch()
-    
+   
     const [message, setMessage] = useState("")
     const navigate = useNavigate()
     const userIdRef = useRef("")
@@ -71,7 +68,7 @@ const JoinSection = () => {
             return
         }
 
-        if (!idCheck(userInfo.userId)) {
+        if ( message=="중복된 아이디입니다." ) {
             alert("중복된 아이디입니다.")
             return
         }
@@ -80,7 +77,7 @@ const JoinSection = () => {
         axios
         .post('http://localhost:8001/auth/join', { addMember } )
         .then((res)=>{
-            console.log(res)
+            console.log("회원가입중", res)
             if (res.data.affectedRows === 1) {
                 alert("회원가입이 성공했습니다.")
             } else { 

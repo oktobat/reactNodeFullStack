@@ -1,11 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
-import { userLogin } from '@/store/member';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { SiNaver } from "react-icons/si";
 import { RiKakaoTalkFill } from "react-icons/ri";
 import { FaGoogle, FaGithub } from "react-icons/fa";
+import axios from 'axios'
+import { userLogin } from '@/store/member';
 
 const LoginSectionBlock = styled.div`
     max-width:600px; margin:50px auto; 
@@ -37,7 +38,6 @@ const LoginSectionBlock = styled.div`
 const LoginSection = () => {
     const navigate = useNavigate()
     const dispatch = useDispatch()
-    const members = useSelector(state=>state.members.members)
     const [userId, setUserId] = useState("")
     const [userPw, setUserPw] = useState("")
 
@@ -59,16 +59,12 @@ const LoginSection = () => {
             userPwRef.current.focus()
             return
         }
-        let findUser = members.find(item=>item.userId==userId)  // { key:"", userId:""}
-        console.log("로그인멤버", members)
-        if (findUser) {
-            if (findUser.userPw!=userPw) {
-                alert("비밀번호가 틀렸습니다.")
-                userPwRef.current.focus()
-                return false
-            } else {
-                dispatch(userLogin({findUser:findUser}))
-                dispatch(fetchCarts())
+        
+        axios.post("http://localhost:8001/auth/login", { userId, userPw })
+        .then((res)=>{
+            if (res.data[0]) {
+                console.log("회원입니다.", res.data[0])
+                dispatch(userLogin(res.data[0]))
                 if (previousUrl=='/payment') {
                     navigate(previousUrl, {state:JSON.parse(choiceProduct)})
                     sessionStorage.removeItem('previousUrl')
@@ -78,12 +74,14 @@ const LoginSection = () => {
                 } else {
                     navigate('/')                
                 }
+            } else {
+                alert("회원이 아닙니다.")
+                userIdRef.current.focus()
+                return false
             }
-        } else {
-            alert("회원이 아닙니다.")
-            userIdRef.current.focus()
-            return false
-        }
+        })
+        .catch(err=>console.log(err.toJSON()))
+        
     }
 
     return (

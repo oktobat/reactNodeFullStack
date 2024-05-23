@@ -10,6 +10,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { initCarts} from '@/store/product'
 import { userLogout, localUser } from '@/store/member'
 import { useMediaQuery } from 'react-responsive'
+import axios from 'axios'
 
 const HeaderBlock = styled.div`
   text-align: center;
@@ -81,7 +82,6 @@ const MyOrder = styled.div`
   color: blue;
 `
 
-
 const MobileNav = styled.nav`
   position:fixed;
   left:100%;
@@ -134,7 +134,12 @@ const Header = () => {
 
     useEffect(()=>{
       if (localStorage.getItem('loging')) {
-        dispatch(localUser(JSON.parse(localStorage.getItem('loging')))) 
+        const {userNo} = JSON.parse(localStorage.getItem('loging'))
+        axios.post("http://localhost:8001/auth/refresh", {userNo})
+        .then((res)=>{
+           dispatch(localUser(res.data[0]))
+        })
+        .catch(err=>console.log(err.toJSON()))
       } 
     }, [dispatch, cartsCount])
 

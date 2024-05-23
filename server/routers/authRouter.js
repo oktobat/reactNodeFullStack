@@ -5,8 +5,7 @@ const authRouter = express.Router()
 
 authRouter.post('/join', (req, res)=>{
    const {userId, userPw, userIrum, handphone, zipCode, addr1, addr2 } = req.body.addMember
-   const addr = `${addr1} ${addr2}`;
-   db.query("INSERT INTO membertbl (userId, userPw, userIrum, handphone, zipCode, addr) VALUES (?, ?, ?, ?, ?, ?)", [userId, userPw, userIrum, handphone, zipCode, addr], (err, result)=>{
+   db.query("INSERT INTO membertbl (userId, userPw, userIrum, handphone, zipCode, addr1, addr2) VALUES (?, ?, ?, ?, ?, ?, ?)", [userId, userPw, userIrum, handphone, zipCode, addr1, addr2], (err, result)=>{
         if (err) {
             throw err
         } else {
@@ -26,5 +25,49 @@ authRouter.post('/idcheck', (req, res)=>{
     })
  })
 
+ authRouter.post('/login', (req, res)=>{
+    const userId = req.body.userId
+    const userPw = req.body.userPw
+    db.query("SELECT * FROM membertbl WHERE userId=? AND userPw=?", [userId, userPw], (err, result)=>{
+        if (err){
+            throw err
+        } else {
+            res.send(result)
+        }
+    })
+})
+
+authRouter.post('/refresh', (req, res)=>{
+    const userNo = req.body.userNo
+    db.query("SELECT * FROM membertbl WHERE userNo=?", [userNo], (err, result)=>{
+        if (err){
+            throw err
+        } else {
+            res.send(result)
+        }
+    })
+})
+
+authRouter.post('/modify', (req, res)=>{
+    const {userNo, userPw, userIrum, handphone, zipCode, addr1, addr2 } = req.body.userInfo
+    db.query("UPDATE membertbl SET userPw=?, userIrum=?, handphone=?, zipCode=?, addr1=?, addr2=? WHERE userNo=?", [userPw, userIrum, handphone, zipCode, addr1, addr2, userNo], (err, result)=>{
+         if (err) {
+             throw err
+         } else {
+             res.send(result)
+         }
+    })
+ })
+
+ authRouter.post('/remove', (req, res)=>{
+    const userNo = req.body.userNo
+    db.query("DELETE FROM membertbl WHERE userNo=?", [userNo], (err, result)=>{
+         if (err) {
+             throw err
+         } else {
+             res.send(result)
+         }
+    })
+ })
 
 export default authRouter;

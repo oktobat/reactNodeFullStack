@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import {useSelector, useDispatch} from 'react-redux';
 import { useNavigate } from 'react-router-dom'
 import { localUser, userLogout } from '@/store/member'
+import axios from 'axios'
 
 const MemberModifySectionBlock = styled.div`
     max-width:600px; margin:50px auto; 
@@ -34,6 +35,7 @@ const MemberModifySection = () => {
     const mAddressSubRef = useRef("")
 
     const [userInfo, setUserInfo] = useState({
+        userNo:user.userNo,
         userId:user.userId,
         userPw:"",
         userPwOk:"",
@@ -66,28 +68,36 @@ const MemberModifySection = () => {
             userPwRef.current.focus()
             return
         }
-        try {
-            await memberDB.child(user.key).update(userInfo)
-            dispatch(localUser(JSON.parse(localStorage.getItem('loging')))) 
-            alert("회원정보를 수정했습니다.")
-            navigate('/')
-        } catch(error){
-            console.log("오류 : ", error)
-        }
+        
+        axios.post("http://localhost:8001/auth/modify", { userInfo:userInfo })
+        .then((res)=>{
+            if (res.data.affectedRows==1) {
+                alert("정보가 수정되었습니다.")
+                console.log(JSON.parse(res.config.data).userInfo)
+                dispatch(localUser(JSON.parse(res.config.data).userInfo))
+                navigate("/")
+            } else {
+                alert("정보 수정중 오류가 발생했습니다.")
+            }
+        })
+
     }
 
     const memberRemove = async (e)=>{
         e.preventDefault()
         const answer = confirm("정말로 탈퇴하시겠습니까?")
         if (answer) {
-            try {
-                await cartDB.child(user.key).remove()
-                await memberDB.child(user.key).remove()
-                dispatch(userLogout())
-                navigate('/')
-            } catch(error){
-                console.log("오류 : ", error)
-            }
+            axios.post("http://localhost:8001/auth/remove", { userNo : userInfo.userNo })
+            .then((res)=>{
+                console.log("탈퇴성공", res)
+                if (res.data.affectedRows==1) {
+                    dispatch(userLogout())
+                    navigate("/")
+                } else {
+                    alert("회원탈퇴를 실패했습니다.")
+                    return
+                }
+            })
         } else {
             return
         }
