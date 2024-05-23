@@ -1,0 +1,18 @@
+@charset "utf-8";
+
+* { margin:0; padding:0; box-sizing:border-box }
+a { color:inherit; text-decoration:none; display:inline-block }
+ul { list-style-type: none;}
+table { width:100%; table-layout:fixed; border-collapse:collapse }
+img { max-width:100%; vertical-align:middle }
+button, input[type=button], input[type=submit], input[type=text] {
+    border:none; 
+}
+button, input[type=button], input[type=submit] { cursor:pointer }
+fieldset { border:none }
+legend { display:none }
+.blind { position:absolute; width:1px; height:1px; overflow:hidden; text-indent:-99999px;}
+
+
+.row { max-width:1200px; margin:auto }
+

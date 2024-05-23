@@ -1,0 +1,42 @@
+구글 파이어베이스 활용하기
+1. 구글에서 파이어베이스 검색하여 이동하고 로그인
+2. 오른쪽 위에 "콘솔로 이동" 클릭
+3. "프로젝트 추가" 클릭(무료는 10개, 기존 프로젝트를 제거해도 새로 생성되지는 않음)
+4. 프로젝트 이름 입력 -> "Firebase를 거래, 사업, 기술, 직업과 관련된 목적으로만 사용할 것을 확인합니다." 체크
+5. "계속" 클릭
+6. "이 프로젝트에서 Google 애널리틱스 사용 설정" 안함
+7. "프로젝트 만들기" 클릭
+8. "새 프로젝트가 준비되었습니다."
+9. 프로젝트명 선택하고 앱에 Firebase를 추가하여 시작하기 아래 "</>(웹)" 클릭
+10. 앱 닉네임 입력, 또한 이 앱의 Firebase 호스팅 설정 "체크(선택)" 앱등록 클릭
+11. Firebase SDK 추가에서 npm 선택
+12. 마지막 콘솔로 이동 단계까지 확인하고 클릭
+13. firebase에서 "빌드" RealTime Database 클릭하여 "데이터베이스 만들기"
+    위치설정 : 미국
+    테스트모드에서 시작 "사용설정"
+14. firebase에서 "빌드" Storage "시작하기" 클릭
+    테스트모드에서 시작 "선택"
+    위치설정 "완료" 클릭
+
+15. firebase에서 "빌드" Hoting "시작하기" 클릭
+16. npm install -g firebase-tools@latest (컴퓨터마다 한번만)
+17. vsc에서 firebase login(상황에 따라 다시 로그인을 하거나 로그아웃(firebase logout) 해야함)
+     Allow Firebase to collect CLI and Emulator Suite usage and error reporting information? No
+     Success! Logged in as chamsogum@gmail.com
+18. vsc에서 firebase init (프로젝트마다 한번만)
+    "Are you ready to proceed?" Y
+    스페이스바 눌러 선택 (*) "Hosting: Configure files for Firebase Hosting and (optionally) set up GitHub Action deploys"
+    Please select an option : (Use arrow keys) 
+       Use an existing project (선택)
+       프로젝트명 선택
+    "What do you want to use as your public directory?"(public) dist 입력하고 엔터
+    "Configure as a single-page app (rewrite all urls to /index.html)?" N
+    "Set up automatic builds and deploys with GitHub?" N
+    "File dist/index.html already exists. Overwrite?" N
+19. https://ko.vitejs.dev/guide/static-deploy (정적 웹 페이지로 배포하기 : Google Firebase)
+   프로젝트 루트 폴더에 두 개 파일 자동 생성(확인) : firebase.json, .firebaserc (프로젝트 ID 수정) 
+   자동생성되지 않으면 위의 참고사이트 참고해서 직접 만들것
+20. vsc : npm run build => 프로젝트 폴더에 dist 폴더가 생성됨
+21. vsc : firebase deploy
+22. 카카오맵 Web 플랫폼에 파이어베이스 호스팅 주소 추가
+23. 코드가 수정될때마다 20, 21번만 반복

@@ -1,0 +1,22 @@
+[
+    { "category":"woman", "id":1001, "title":"여성의류1", "price":437500, "rating":5, "description":"여성의류1 요약설명은 <strong>중요</strong>합니다.", "inventory":10, "image":"./assets/image/0010050001972.jpg" },
+    { "category":"kids", "id":4002, "title":"아동의류2", "price":124750, "rating":4, "description":"아동의류2 요약설명은 <strong>중요</strong>합니다.", "inventory":20, "image":"./assets/image/0010050001982.jpg" },
+    { "category":"woman", "id":1002, "title":"여성의류2", "price":124750, "rating":4, "description":"여성의류2 요약설명은 <strong>중요</strong>합니다.", "inventory":20, "image":"./assets/image/0010050001982.jpg" },
+    { "category":"man", "id":2001, "title":"남성의류1", "price":437500, "rating":5, "description":"남성의류1 요약설명은 <strong>중요</strong>합니다.", "inventory":10, "image":"./assets/image/0010050001972.jpg" },
+    { "category":"man", "id":2002, "title":"남성의류2", "price":124750, "rating":4, "description":"남성의류2 요약설명은 <strong>중요</strong>합니다.", "inventory":20, "image":"./assets/image/0010050001982.jpg" },
+    { "category":"woman", "id":1003, "title":"여성의류3", "price":412750, "rating":3, "description":"여성의류3 요약설명은 <strong>중요</strong>합니다.", "inventory":30, "image":"./assets/image/0010090001352.jpg" },
+    { "category":"woman", "id":1004, "title":"여성의류4", "price":123750, "rating":2, "description":"여성의류4 요약설명은 <strong>중요</strong>합니다.", "inventory":10, "image":"./assets/image/0010140000072.jpg" },
+    { "category":"underwear", "id":3002, "title":"언더웨어2", "price":124750, "rating":4, "description":"언더웨어2 요약설명은 <strong>중요</strong>합니다.", "inventory":20, "image":"./assets/image/0010050001982.jpg" },
+    { "category":"underwear", "id":3003, "title":"언더웨어3", "price":412750, "rating":3, "description":"언더웨어3 요약설명은 <strong>중요</strong>합니다.", "inventory":30, "image":"./assets/image/0010090001352.jpg" },
+    { "category":"woman", "id":1005, "title":"여성의류5", "price":422750, "rating":1, "description":"여성의류5 요약설명은 <strong>중요</strong>합니다.", "inventory":5, "image":"./assets/image/0030130005042.jpg" },
+    { "category":"man", "id":2003, "title":"남성의류3", "price":412750, "rating":3, "description":"남성의류3 요약설명은 <strong>중요</strong>합니다.", "inventory":30, "image":"./assets/image/0010090001352.jpg" },
+    { "category":"man", "id":2004, "title":"남성의류4", "price":123750, "rating":2, "description":"남성의류4 요약설명은 <strong>중요</strong>합니다.", "inventory":10, "image":"./assets/image/0010140000072.jpg" },
+    { "category":"man", "id":2005, "title":"남성의류5", "price":422750, "rating":1, "description":"남성의류5 요약설명은 <strong>중요</strong>합니다.", "inventory":5, "image":"./assets/image/0030130005042.jpg" },
+    { "category":"underwear", "id":3001, "title":"언더웨어1", "price":437500, "rating":5, "description":"언더웨어1 요약설명은 <strong>중요</strong>합니다.", "inventory":10, "image":"./assets/image/0010050001972.jpg" },
+    { "category":"kids", "id":4004, "title":"아동의류4", "price":123750, "rating":2, "description":"아동의류4 요약설명은 <strong>중요</strong>합니다.", "inventory":10, "image":"./assets/image/0010140000072.jpg" },
+    { "category":"kids", "id":4005, "title":"아동의류5", "price":422750, "rating":1, "description":"아동의류5 요약설명은 <strong>중요</strong>합니다.", "inventory":5, "image":"./assets/image/0030130005042.jpg" },
+    { "category":"underwear", "id":3004, "title":"언더웨어4", "price":123750, "rating":2, "description":"언더웨어4 요약설명은 <strong>중요</strong>합니다.", "inventory":10, "image":"./assets/image/0010140000072.jpg" },
+    { "category":"underwear", "id":3005, "title":"언더웨어5", "price":422750, "rating":1, "description":"언더웨어5 요약설명은 <strong>중요</strong>합니다.", "inventory":5, "image":"./assets/image/0030130005042.jpg" },
+    { "category":"kids", "id":4001, "title":"아동의류1", "price":437500, "rating":5, "description":"아동의류1 요약설명은 <strong>중요</strong>합니다.", "inventory":10, "image":"./assets/image/0010050001972.jpg" },
+    { "category":"kids", "id":4003, "title":"아동의류3", "price":412750, "rating":3, "description":"아동의류3 요약설명은 <strong>중요</strong>합니다.", "inventory":30, "image":"./assets/image/0010090001352.jpg" }
+]
