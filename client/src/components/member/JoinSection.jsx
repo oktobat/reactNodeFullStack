@@ -2,6 +2,7 @@ import React, {useRef, useState, useEffect} from 'react';
 import styled from 'styled-components'
 import {useNavigate} from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
+import axios from 'axios'
 
 const JoinSectionBlock = styled.div`
     max-width:600px; margin:50px auto; 
@@ -70,32 +71,38 @@ const JoinSection = () => {
             return
         }
 
-        if (!idCheck(userInfo.userId)) {
-            return false;
-        }
+        // if (!idCheck(userInfo.userId)) {
+        //     return false;
+        // }
 
 
-        const addMember = {mId:Date.now(), userId:userInfo.userId, userPw:userInfo.userPw, userIrum:userInfo.userIrum, handphone:userInfo.handphone, zipCode:userInfo.zipCode, addr1:userInfo.addr1, addr2:userInfo.addr2}
-        try {
-            await memberDB.push(addMember)
-            alert("회원가입이 성공했습니다.")
-            navigate('/login')
-        } catch(error){
-            console.log("오류 : ", error)
-        }
+        const addMember = {userId:userInfo.userId, userPw:userInfo.userPw, userIrum:userInfo.userIrum, handphone:userInfo.handphone, zipCode:userInfo.zipCode, addr1:userInfo.addr1, addr2:userInfo.addr2}
+        axios
+        .post('http://localhost:8001/auth/join', { addMember } )
+        .then((res)=>{
+            console.log(res)
+            if (res.data.affectedRows === 1) {
+                alert("회원가입이 성공했습니다.")
+            } else { 
+                alert("실패")
+                return
+            }
+            navigate("/login")
+        })
+        .catch(err=>console.log(err.toJSON()))
     }
     
-    const idCheck = (value)=>{
-        let duplicate = members.find(item=>item.userId==value)
-        console.log(duplicate)
-        if (duplicate) {
-            alert("중복된 아이디입니다.");
-            userIdRef.current.focus();
-            return false
-        } else {
-            return true
-        }
-    }
+    // const idCheck = (value)=>{
+    //     let duplicate = members.find(item=>item.userId==value)
+    //     console.log(duplicate)
+    //     if (duplicate) {
+    //         alert("중복된 아이디입니다.");
+    //         userIdRef.current.focus();
+    //         return false
+    //     } else {
+    //         return true
+    //     }
+    // }
 
     useEffect(()=>{
         
