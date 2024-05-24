@@ -59,4 +59,26 @@ boardRouter.get("/notice/hit", (req, res)=>{
     })
 })
 
+boardRouter.post("/notice/modify", (req, res)=>{
+    const {noNo, subject, content } = req.body.board
+    db.query("UPDATE noticetbl SET subject=?, content=? WHERE noNo=?", [subject, content, noNo], (err, result)=>{
+        if (err) {
+            res.status(500).send("수정 실패")
+        } else {
+            res.send(result)
+        }
+    })
+})
+
+boardRouter.get("/notice/remove", (req, res)=>{
+    const noNo = req.query.no
+    db.query("DELETE FROM noticetbl WHERE noNo=?", [noNo], (err, result)=>{
+        if (err) {
+            res.status(500).send("실패")
+        } else {
+            res.send(result)
+        }
+    })
+})
+
 export default boardRouter;

@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import styled from 'styled-components'
 import {Link, useNavigate} from 'react-router-dom'
 import {useSelector} from 'react-redux'
+import axios from 'axios'
 
 const BoardModifyBlock = styled.div`
 max-width:600px; margin:0 auto 50px; 
@@ -21,10 +22,12 @@ table {
 
 const BoardModify = ({post}) => {
     const type = useSelector(state=>state.boards.type)    
+    const currentPage = useSelector(state=>state.boards.currentPage )
 
     const navigate = useNavigate()
 
     const [board, setBoard] = useState({
+        noNo : post.noNo,
         subject:post.subject,
         content:post.content
     })
@@ -44,17 +47,22 @@ const BoardModify = ({post}) => {
     const onSubmit = (e)=>{
         e.preventDefault()
         if (type=="notice") {
-            noticeDB.child(post.key).update({
-               subject : board.subject,
-               content : board.content
-            })
+           axios.post("http://localhost:8001/board/notice/modify", { board : board })
+           .then((res)=>{
+                if (res.data.affectedRows==1) {
+                    navigate("/boardList", {state : { page : currentPage}})
+                } else {
+                    alert("수정하지 못했습니다.")
+                    return
+                }
+           })
+           .catch(err=>console.log(err.toJSON()))
         } else if (type=="review") {
             reviewDB.child(post.key).update({
                 rating : rating,
                 content : board.content
              })
         }
-        navigate("/boardList")
     }
 
     return (

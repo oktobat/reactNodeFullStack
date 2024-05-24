@@ -194,7 +194,7 @@ const Header = () => {
                           <NavLink to="/product">Product</NavLink>
                       </li>
                       <li>
-                          <NavLink to="/boardList">Community</NavLink>
+                          <NavLink to="/boardList" state={{page:1}}>Community</NavLink>
                       </li>
                   </ul>
               </nav>

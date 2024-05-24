@@ -24,17 +24,26 @@ const BoardDetail = ({post}) => {
 
     const type = useSelector(state=>state.boards.type)    
     const user = useSelector(state=>state.members.user)
+    const currentPage = useSelector(state=>state.boards.currentPage)
 
     const navigate = useNavigate()
 
     const onRemove = (e)=>{
         e.preventDefault()
         if (type=="notice") {
-            noticeDB.child(post.key).remove()
+            axios.get(`http://localhost:8001/board/notice/remove?no=${post.noNo}`)
+            .then((res)=>{
+                if (res.data.affectedRows==1) {
+                    navigate("/boardList", { state : {page : currentPage }})
+                } else {
+                    alert("삭제하지 못했습니다.")
+                    return 
+                }
+            })
+            .catch(err=>console.log(err))
         } else if (type=="review") {
             reviewDB.child(post.key).remove()
         }
-        navigate("/boardList")
     }
 
     useEffect(()=>{
@@ -109,7 +118,7 @@ const BoardDetail = ({post}) => {
                         <a href="#" onClick={ onRemove }>삭제</a>
                     </>
                 }
-                <Link to="/boardList">목록</Link>
+                <Link to="/boardList" state={{ page:currentPage}}>목록</Link>
             </div>
         </BoardDetailBlock>
     );
