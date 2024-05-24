@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import axios from 'axios'
 
 const boardSlice = createSlice({
     name:"boards",
@@ -36,14 +37,14 @@ const boardSlice = createSlice({
 
 export const { initNotice, initReview, changeType, setPage } = boardSlice.actions;
 
-export const fetchNotice = (page, dispatch)=>{
+export const fetchNotice = (page) => (dispatch) =>{
     axios.get(`http://localhost:8001/board/notice/list?page=${page}`)
     .then((res)=>{
         console.log("공지글", res)
         const { totalCount, data} = res.data;
         dispatch(initNotice({ totalCount : totalCount, data : data }))
     })
-    .catch(err=>console.log(err.toJSON()))
+    .catch(err=>console.log(err))
 }
 
 

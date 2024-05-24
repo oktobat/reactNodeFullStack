@@ -23,6 +23,12 @@ const BoardListBlock = styled.div`
         text-align:center; margin:20px 0; 
         a { padding:10px 20px; background:red; color:#fff }
     }
+    .pagebutton {
+        text-align:center;
+        button { padding:5px 10px; background:#ddd; margin:20px 5px;
+            &.on { background:red }
+        }
+    }
 `
 
 const BoardList = () => {
@@ -73,9 +79,9 @@ const BoardList = () => {
                     }
                 </tbody>
             </table>
-            <div>
+            <div className="pagebutton">
                 {Array.from({ length: totalPages }, (_, i) => (
-                    <button key={i} onClick={() => dispatch(setPage(i + 1))}>
+                    <button key={i} className={ currentPage == (i+1) && "on"} onClick={()=>{ dispatch(setPage(i + 1)); } }>
                         {i + 1}
                     </button>
                 ))}

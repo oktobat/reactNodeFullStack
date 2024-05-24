@@ -2,6 +2,7 @@ import React, {useEffect} from 'react';
 import styled from 'styled-components'
 import {Link, useNavigate} from 'react-router-dom'
 import {useSelector} from 'react-redux'
+import axios from 'axios'
 
 const BoardDetailBlock = styled.div`
 max-width:600px; margin:0 auto 50px; 
@@ -38,9 +39,15 @@ const BoardDetail = ({post}) => {
 
     useEffect(()=>{
         if (type=="notice") {
-            noticeDB.child(post.key).update({
-                'hit' : post.hit+1
+            axios.get(`http://localhost:8001/board/notice/hit?no=${post.noNo}&hit=${post.hit}`)
+            .then((res)=>{
+                if (res.data.affectedRows==1) {
+                    console.log("증가했습니다.")
+                } else {
+                    console.log("증가하지 못했습니다.")
+                }
             })
+            .catch(err=>console.log(err.toJSON()))
         } else if (type=="review") {
             reviewDB.child(post.key).update({
                 'hit' : post.hit+1
@@ -81,7 +88,7 @@ const BoardDetail = ({post}) => {
                         { type=="notice" ? 
                             <tr>
                                 <td>제목</td>
-                                <td><input type="text" name="subject" value={board.subject} disabled /></td>
+                                <td><input type="text" name="subject" value={post.subject} disabled /></td>
                             </tr>
                             :
                             <tr>

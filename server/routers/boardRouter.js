@@ -47,4 +47,16 @@ boardRouter.get('/notice/list', (req, res)=>{
     })
  })
 
+boardRouter.get("/notice/hit", (req, res)=>{
+    const noNo = req.query.no
+    const hit = parseInt(req.query.hit)
+    db.query("UPDATE noticetbl SET hit=? WHERE noNo=?", [hit+1, noNo], (err, result)=>{
+        if (err) {
+            res.status(500).send("수정 실패")
+        } else {
+            res.send(result)
+        }
+    })
+})
+
 export default boardRouter;
