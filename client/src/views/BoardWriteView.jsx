@@ -11,14 +11,14 @@ const BoardWriteViewBlock = styled.div`
 `
 
 const BoardWriteView = () => {
-    const location = useLocation()
-    const {orderKey, product} = location.state
+    // const location = useLocation()
+    // const {orderKey, product} = location.state
     const type = useSelector(state=>state.boards.type)
 
     return (
         <BoardWriteViewBlock className="row">
             <h2>{ type }</h2>
-            <BoardWrite type={type} orderKey={orderKey} product={product} />
+            <BoardWrite type={type} />
         </BoardWriteViewBlock>
     );
 };

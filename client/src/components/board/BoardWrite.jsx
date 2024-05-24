@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import styled from 'styled-components'
 import {Link, useNavigate} from 'react-router-dom'
 import {useSelector} from 'react-redux'
+import axios from 'axios'
 
 const BoardWriteBlock = styled.div`
 max-width:600px; margin:0 auto 50px; 
@@ -19,11 +20,12 @@ table {
 }
 `
 
-const BoardWrite = ({type, orderKey, product}) => {
+const BoardWrite = ({ type }) => {
     const user = useSelector(state=>state.members.user)
     const navigate = useNavigate()
 
     const [board, setBoard] = useState({
+        writer:user.userId,
         subject:"",
         content:""
     })
@@ -44,13 +46,19 @@ const BoardWrite = ({type, orderKey, product}) => {
 
     const onSubmit = (e)=>{
         e.preventDefault()
-        const date = new Date().toISOString()
         if (type=="notice") {
-            noticeDB.push({...board, writer:user.userId, hit:0, date:date})
+            axios.post("http://localhost:8001/board/notice/write", { board:board })
+            .then((res)=>{
+                if (res.data.affectedRows==1) {
+                    navigate("/boardList")
+                } else {
+                    alert("글이 등록되지 않았습니다.")
+                }
+            })
+            .catch(err=>console.log(err.toJSON()))
         } else if (type=="review") {
-            reviewDB.push({...board, writer:user.userId, hit:0, date:date, subject:product.name, rating:rating, product:product, orderKey:orderKey})
+            
         }
-        navigate("/boardList")
     }
 
     return (

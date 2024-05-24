@@ -2,7 +2,7 @@ import React, {useEffect} from 'react';
 import styled from 'styled-components'
 import {Link} from 'react-router-dom'
 import {useSelector, useDispatch} from 'react-redux'
-import { changeType } from '@/store/board'
+import { changeType, fetchNotice, setPage } from '@/store/board'
 import dayjs from 'dayjs'
 
 const BoardListBlock = styled.div`
@@ -28,16 +28,18 @@ const BoardListBlock = styled.div`
 const BoardList = () => {
     const dispatch = useDispatch()
     const user = useSelector(state=>state.members.user)
-    const list = useSelector(state=>state.boards.list)
-    const type = useSelector(state=>state.boards.type)
+    const {list, type, totalCount, currentPage } = useSelector(state=>state.boards)
+
+    const totalPages = Math.ceil(totalCount / 10);
 
     useEffect(()=>{
         if (type=="notice") {
             dispatch(changeType("notice"))
+            dispatch(fetchNotice(currentPage))
         } else {
             dispatch(changeType("review"))
         }
-    }, [])
+    }, [dispatch, type, currentPage])
 
     return (
         <BoardListBlock>
@@ -61,7 +63,7 @@ const BoardList = () => {
                 <tbody>
                     { list.length>0 && list.map((post, index)=>(
                         <tr key={index}>
-                            <td>{list.length-index}</td>
+                            <td>{totalCount - ((currentPage - 1) * 10 + index)}</td>
                             <td><Link to={`/boardList/${post.subject}`} state={{ post : post }}>{post.subject}</Link></td>
                             <td>{post.writer}</td>
                             <td>{dayjs(post.date).format('YYYY-MM-DD')}</td>
@@ -71,6 +73,13 @@ const BoardList = () => {
                     }
                 </tbody>
             </table>
+            <div>
+                {Array.from({ length: totalPages }, (_, i) => (
+                    <button key={i} onClick={() => dispatch(setPage(i + 1))}>
+                        {i + 1}
+                    </button>
+                ))}
+            </div>
             { (type=="notice" && user && user.userId == "tsalt@hanmail.net") &&
                 <div className="btn">
                     <Link to="/boardWrite">글쓰기</Link>
