@@ -18,14 +18,17 @@ app.use(express.json())           // 사용자의 json 요청을 처리하여 re
 
 import authRouter from './routers/authRouter.js'
 import boardRouter from './routers/boardRouter.js'
+import productRouter from './routers/productRouter.js'
 
 // 리소스 파일들을 관리하는 경로 지정하기
 const __dirname = path.resolve()
-app.use(express.static(path.join(__dirname, 'build')))
+// app.use(express.static(path.join(__dirname, 'build')))
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 
 app.use('/auth', authRouter)
 app.use('/board', boardRouter)
-// app.use('/product', productRouter)
+app.use('/product', productRouter)
 
 
 // 지정한 포트에서 서버를 실행함

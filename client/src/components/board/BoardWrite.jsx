@@ -50,7 +50,7 @@ const BoardWrite = ({ type }) => {
             axios.post("http://localhost:8001/board/notice/write", { board:board })
             .then((res)=>{
                 if (res.data.affectedRows==1) {
-                    navigate("/boardList")
+                    navigate("/boardList", {state:{page:1}})
                 } else {
                     alert("글이 등록되지 않았습니다.")
                 }

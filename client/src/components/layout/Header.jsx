@@ -191,7 +191,7 @@ const Header = () => {
                           <NavLink to="/theater">Theater</NavLink>
                       </li>
                       <li>
-                          <NavLink to="/product">Product</NavLink>
+                          <NavLink to="/product" state={{ page:1, category:'all'}}>Product</NavLink>
                       </li>
                       <li>
                           <NavLink to="/boardList" state={{page:1}}>Community</NavLink>

@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import styled from 'styled-components'
+import axios from 'axios'
 
 const ProductInsertSectionBlock = styled.div`
     max-width:500px; margin:0 auto;
@@ -34,10 +35,6 @@ const ProductInsertSection = () => {
     const handleChange = (e)=>{
         console.log(e)
         const {value, name} = e.target
-        // setProduct(product=>{
-        //     let newProduct = {...product, [name]:value }
-        //     return newProduct
-        // })
         setProduct(product=>({...product, [name]:value }))
     }
 
@@ -51,7 +48,39 @@ const ProductInsertSection = () => {
     const onSubmit = async (e)=>{
         e.preventDefault()
         console.log(product)
-        const addProduct = {...product, id:Date.now()}
+
+        const formData = new FormData();
+        formData.append("category", product.category)
+        formData.append("name", product.name);
+        formData.append("price", product.price);
+        formData.append("description", product.description);
+        formData.append("inventory", product.inventory);
+
+        if (product.photo) {
+            formData.append("photo", product.photo)
+        }
+        axios.post("http://localhost:8001/product/register", formData, {
+            headers : {
+                "Content-Type": "multipart/form-data",
+            }
+        })
+        .then((res)=>{
+            if (res.data.affectedRows == 1) {
+                setProduct({
+                    category:"woman",
+                    name:"",
+                    price:"",
+                    description:"",
+                    inventory:"",
+                    photo:"",
+                })
+                setPhotoValue("")
+            } else {
+                alert("상품등록 실패")
+                return
+            }
+        })
+        .catch(err=>console.log(err))
     }
 
     return (

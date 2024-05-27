@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import { BsCartPlusFill, BsCartPlus  } from "react-icons/bs";
 import { ImSpinner } from "react-icons/im";
 import { Link, useNavigate } from 'react-router-dom'
+import { setPage, fetchProduct } from '@/store/product'
 
 const ProductSectionBlock = styled.div``
 
@@ -44,6 +45,13 @@ const ProductInsert = styled.div`
     a { padding:10px 20px; background:#999; }
 `
 
+const PageButton = styled.div`
+    text-align:center;
+    button { padding:5px 10px; background:#ddd; margin:20px 5px;
+        &.on { background:red }
+    }
+`
+
 const ProductSection = ({title}) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -51,7 +59,10 @@ const ProductSection = ({title}) => {
     const user = useSelector(state=>state.members.user)
     const carts = useSelector(state=>state.products.carts)
     const allData = useSelector(state=>state.products.products)
-    const [products, setProducts] = useState(allData)
+    const currentPage = useSelector(state=>state.products.currentPage)
+    const totalCount = useSelector(state=>state.products.totalCount)
+    const totalPages = Math.ceil(totalCount / 12);
+    const [products, setProducts] = useState(null)
     const sortType = [
         { type:'name', text:'상품명순'},
         { type:'price', text:'가격순'}
@@ -96,17 +107,49 @@ const ProductSection = ({title}) => {
             navigate("/login")
         }
     }
+    
+    const renderPageButtons = ()=>{
+        const startPage = Math.floor((currentPage - 1) / 10) * 10 + 1;
+        const endPage = Math.min(startPage + 9, totalPages);
+        const pages = []
+        if (startPage>1) {
+            pages.push(
+                <button key="prev" onClick={() => dispatch(setPage(startPage - 1))}>
+                    &lt; 
+                </button>
+            );
+        }
+        for (let i = startPage; i <= endPage; i++) {
+            pages.push(
+                <button
+                    key={i}
+                    className={currentPage === i ? 'on' : ''}
+                    onClick={() => dispatch(setPage(i))}
+                >
+                    {i}
+                </button>
+            );
+        }
+        if (endPage < totalPages) {
+            pages.push(
+                <button key="next" onClick={() => dispatch(setPage(endPage + 1))}>
+                    &gt;
+                </button>
+            );
+        }
+        return pages;
+    }
+
+    useEffect(()=>{
+        dispatch(fetchProduct(currentPage, title))
+    }, [dispatch, currentPage, title])
 
     useEffect(()=>{
         if (allData.length>0) {
+            setProducts(allData);
             setLoading(true)
-            if (title=='all') {
-                setProducts(allData)
-            } else {
-                setProducts(allData.filter((item)=>item.category==title))
-            }
         }
-    }, [allData, title])
+    }, [allData])
  
     if (!loading) {
         return (
@@ -134,7 +177,7 @@ const ProductSection = ({title}) => {
                 products.map((item, index)=>(
                     <ListBlock key={index}>
                         <div className="photo">
-                            <Link to={`/product/${item.id}`} state={{ item : item }}><img src={item.photo} alt={item.name} /></Link>
+                            <Link to={`/product/${item.id}`} state={{ item : item }}><img src={`http://localhost:8001/uploads/${item.photo}`} alt={item.name} /></Link>
                         </div>
                         <div className="info">
                             <p><a href="#">{item.name}</a></p>
@@ -166,6 +209,9 @@ const ProductSection = ({title}) => {
                 ))
             }
             </UlBlock>
+            <PageButton className="pagebutton">
+                { renderPageButtons() }
+            </PageButton>
             { (user && user.userId=='tsalt@hanmail.net') &&
                 <ProductInsert>
                     <Link to="/productInsert">상품등록</Link>
