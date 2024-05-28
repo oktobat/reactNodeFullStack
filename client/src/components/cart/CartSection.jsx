@@ -52,18 +52,15 @@ const Button = styled.div`
 const CartSection = () => {
     const navigate = useNavigate()
     const dispatch = useDispatch()
-    const products = useSelector(state=>state.products.products)
     const carts = useSelector(state=>state.products.carts)
     const user = useSelector(state=>state.members.user)
-    
-    const [tempProducts, setTempProducts] = useState([])
+   
     const [total, setTotal] = useState(0)
     const [allCount, setAllCount] = useState(0)
 
     // 각 제품에 대한 수량 상태를 관리하기 위한 상태
     const [quantityValues, setQuantityValues] = useState({});
     
-
     const onChange = (e, id, inventory) => {
         setQuantityValues(prevState => ({
             ...prevState,
@@ -139,18 +136,9 @@ const CartSection = () => {
 
     useEffect(() => {
         if (carts.length) {
-            setTempProducts(()=>{
-                const newData = carts.map(item=>{
-                    const product = products.find(product => product.id == item.key)
-                    return { product:product, qty:item.qty }
-                })
-                setTotal(newData.reduce((acc, item)=>acc+(parseInt(item.product.price) * parseInt(item.qty)), 0))
-                setAllCount(newData.reduce((acc, item)=>acc+(parseInt(item.qty)), 0))
-                return newData
-            })
-        } else {
-            setTempProducts([])
-        }
+            setTotal(carts.reduce((acc, item)=>acc+(parseInt(item.price) * parseInt(item.qty)), 0))
+            setAllCount(carts.reduce((acc, item)=>acc+(parseInt(item.qty)), 0))
+        } 
     }, [carts]);
 
     return (
@@ -174,25 +162,25 @@ const CartSection = () => {
                         <th>기타</th>
                     </tr>
                 </thead>
-                { tempProducts && tempProducts.length ? 
+                { carts && carts.length ? 
                     <tbody>
-                        {  tempProducts.map((item, index)=>(
+                        {  carts.map((item, index)=>(
                                 <tr key={index}>
-                                    <td style={{textAlign:'center'}}><input type="checkbox" name="choice" onClick={()=>handleToggle(item.product.id)} /></td>
+                                    <td style={{textAlign:'center'}}><input type="checkbox" name="choice" onClick={()=>handleToggle(item.prNo)} /></td>
                                     <td>
-                                        <img src={item.product.photo} alt={item.product.name} />
+                                        <img src={`http://localhost:8001/uploads/${item.photo}`} alt={item.name} />
                                     </td>
                                     <td>
-                                        { item.product.name } ({parseInt(item.product.price).toLocaleString()})
+                                        { item.name } ({parseInt(item.price).toLocaleString()})
                                     </td>
                                     <td>
-                                        <input type="number" value={quantityValues[item.product.id] || item.qty}  onChange={ (e)=>onChange(e, item.product.id, item.product.inventory) } />
+                                        <input type="number" value={quantityValues[item.prNo] || item.qty}  onChange={ (e)=>onChange(e, item.prNo, item.inventory) } />
                                     </td>
                                     <td>
-                                        { (parseInt(item.product.price) * parseInt(item.qty)).toLocaleString() }
+                                        { (parseInt(item.price) * parseInt(item.qty)).toLocaleString() }
                                     </td>
                                     <td>
-                                        <button type="button" onClick={ ()=>removeCartItem(item.product.id) }>삭제</button>
+                                        <button type="button" onClick={ ()=>removeCartItem(item.cartNo) }>삭제</button>
                                     </td>
                                 </tr>
                             ))
@@ -213,7 +201,7 @@ const CartSection = () => {
                     <tr>
                         <td colSpan="5">
                             총 주문금액 : { total.toLocaleString() }원 <br/>
-                            주문상품수량 : { tempProducts && tempProducts.length }종 {allCount}개
+                            주문상품수량 : { carts && carts.length }종 {allCount}개
                         </td>
                     </tr>
                 </tfoot>

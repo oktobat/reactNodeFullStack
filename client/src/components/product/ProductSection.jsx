@@ -4,7 +4,8 @@ import styled from 'styled-components'
 import { BsCartPlusFill, BsCartPlus  } from "react-icons/bs";
 import { ImSpinner } from "react-icons/im";
 import { Link, useNavigate } from 'react-router-dom'
-import { setPage, fetchProduct } from '@/store/product'
+import { setPage, fetchProduct, fetchCart } from '@/store/product'
+import axios from 'axios'
 
 const ProductSectionBlock = styled.div``
 
@@ -98,9 +99,17 @@ const ProductSection = ({title}) => {
         }
     }
 
-    const addToCart = async (id)=>{
+    const addToCart = async (no)=>{
         if (user) {
-            
+            axios.post("http://localhost:8001/product/cart", {prNo:no, userNo:user.userNo, qty:1 })
+            .then((res)=>{
+                if (res.data.affectedRows==1) {
+                    console.log("장바구니 담기 성공")
+                } else {
+                    console.log("장바구니 담기 실패")
+                }
+            })
+            .catch(err=>console.log(err))
         } else {
             alert("로그인을 해주세요.")
             sessionStorage.setItem('previousUrl', '/product');
@@ -142,7 +151,8 @@ const ProductSection = ({title}) => {
 
     useEffect(()=>{
         dispatch(fetchProduct(currentPage, title))
-    }, [dispatch, currentPage, title])
+        dispatch(fetchCart(user.userNo))
+    }, [dispatch, currentPage, title, user])
 
     useEffect(()=>{
         if (allData.length>0) {
@@ -177,7 +187,7 @@ const ProductSection = ({title}) => {
                 products.map((item, index)=>(
                     <ListBlock key={index}>
                         <div className="photo">
-                            <Link to={`/product/${item.id}`} state={{ item : item }}><img src={`http://localhost:8001/uploads/${item.photo}`} alt={item.name} /></Link>
+                            <Link to={`/product/${item.prNo}`} state={{ item : item }}><img src={`http://localhost:8001/uploads/${item.photo}`} alt={item.name} /></Link>
                         </div>
                         <div className="info">
                             <p><a href="#">{item.name}</a></p>
@@ -193,10 +203,10 @@ const ProductSection = ({title}) => {
                                }
                                <span style={{marginLeft:"10px"}}>{item.reviewCount}</span>건
                             </p>
-                            { item.inventory!=cartIdCount(item.id) ? 
+                            { item.inventory!=cartIdCount(item.prNo) ? 
                                 <>
-                                    <button onClick={ ()=>addToCart(item.id) }><BsCartPlusFill /></button> 
-                                    <span>{ item.inventory - cartIdCount(item.id) }개 남았습니다.</span>
+                                    <button onClick={ ()=>addToCart(item.prNo) }><BsCartPlusFill /></button> 
+                                    <span>{ item.inventory - cartIdCount(item.prNo) }개 남았습니다.</span>
                                 </>
                                 : 
                                 <>

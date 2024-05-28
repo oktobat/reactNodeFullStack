@@ -74,8 +74,46 @@ productRouter.get("/list", (req, res)=>{
             })
         }
     })
+})
 
+productRouter.post("/cart", (req, res)=>{
+  const {userNo, prNo, qty} = req.body
 
+  const query = `
+                INSERT INTO cart (userNo, prNo, qty) VALUES (?, ?, ?)
+                ON DUPLICATE KEY 
+                UPDATE qty = qty + VALUES(qty)
+                `
+
+  db.query(query, [userNo, prNo, qty], (err, cartResult)=>{
+        if (err) {
+            res.status(500).send("장바구니 담기 실패");
+            throw err
+        } else {
+            res.send(cartResult)
+        }
+  })
+})
+
+productRouter.get("/cartList", (req, res)=>{
+   const userNo = req.query.no
+
+   const query = `
+                SELECT c.prNo, c.userNo, c.qty, p.name, p.price, p.photo, p.inventory 
+                FROM cart c
+                JOIN producttbl p
+                ON c.prNo = p.prNo
+                WHERE c.userNo=? 
+                 `
+
+   db.query(query, [userNo], (err, cartResult)=>{
+        if (err) {
+            res.status(500).send("장바구니 검색 실패");
+            throw err
+        } else {
+            res.send(cartResult)
+        }
+   })
 })
 
 export default productRouter;

@@ -7,6 +7,7 @@ import { RiKakaoTalkFill } from "react-icons/ri";
 import { FaGoogle, FaGithub } from "react-icons/fa";
 import axios from 'axios'
 import { userLogin } from '@/store/member';
+import { fetchCart } from '@/store/product'
 
 const LoginSectionBlock = styled.div`
     max-width:600px; margin:50px auto; 
@@ -65,6 +66,7 @@ const LoginSection = () => {
             if (res.data[0]) {
                 console.log("회원입니다.", res.data[0])
                 dispatch(userLogin(res.data[0]))
+                dispatch(fetchCart(res.data[0].userNo))
                 if (previousUrl=='/payment') {
                     navigate(previousUrl, {state:JSON.parse(choiceProduct)})
                     sessionStorage.removeItem('previousUrl')

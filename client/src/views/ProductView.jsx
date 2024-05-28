@@ -9,6 +9,7 @@ import { fetchProduct, setPage } from '@/store/product'
 const ProductView = () => {
     const dispatch = useDispatch()
     const location = useLocation()
+    
     const {page, category } = location.state
     const [title, setTitle] = useState("all")
     const changeTitle = (value)=>{

@@ -53,10 +53,10 @@ const ProductDetailSection = ({product}) => {
             <h2>{ product.name }</h2>
             <div className="content">
                 <div className="photo">
-                    <img src={product.photo} alt={product.name} />
+                    <img src={`http://localhost:8001/uploads/${product.photo}`} alt={product.name} />
                 </div>
                 <div className="info">
-                    <p>이 상품의 아이디는 { product.id }</p>
+                    <p>이 상품의 아이디는 { product.prNo }</p>
                     <p>카테고리 : { product.category }</p>
                     <p>가격 : { product.price.toLocaleString() }</p>
                     <p>요약설명 : <span dangerouslySetInnerHTML={{ __html: product.description }} /></p>
@@ -83,7 +83,7 @@ const ProductDetailSection = ({product}) => {
                       : ""
                       }
                       { (user && user.userId=='tsalt@hanmail.net') && <Link to="/productModify" state={{ product  }}>상품수정</Link>}
-                      { (user && user.userId=='tsalt@hanmail.net') && <a href="#" onClick={ (e)=>removeProduct(e, product.key, product.id) }>상품삭제</a>}
+                      { (user && user.userId=='tsalt@hanmail.net') && <a href="#" onClick={ (e)=>removeProduct(e, product.prNo) }>상품삭제</a>}
                     </div>
                 </div>
             </div>
