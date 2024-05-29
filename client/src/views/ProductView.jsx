@@ -11,7 +11,7 @@ const ProductView = () => {
     const location = useLocation()
     
     const {page, category } = location.state
-    const [title, setTitle] = useState("all")
+    const [title, setTitle] = useState(category)
     const changeTitle = (value)=>{
         setTitle(value)
         dispatch(setPage(1))
@@ -21,7 +21,7 @@ const ProductView = () => {
     useEffect(()=>{
         dispatch(setPage(page))
         dispatch(fetchProduct(page, category))
-    }, [])
+    }, [dispatch, page, category])
 
     return (
         <div className="row">

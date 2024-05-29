@@ -5,7 +5,7 @@ const productSlice = createSlice({
     name:"products",
     initialState : {
         products : [],   // producttbl : { prNo, category, name, price, description, inventory, photo},
-        carts: [],       // cart : {cartNo:cartNo, userNo:userNo, prNo:prNo, qty:3,  }
+        carts: [],       // cart+producttbl : {cartNo:cartNo, userNo:userNo, prNo:prNo, qty:3, name, price, photo, inventory  }
         cartsCount : 0,
         orders:[],
         totalCount:0,

@@ -99,7 +99,7 @@ productRouter.get("/cartList", (req, res)=>{
    const userNo = req.query.no
 
    const query = `
-                SELECT c.prNo, c.userNo, c.qty, p.name, p.price, p.photo, p.inventory 
+                SELECT c.cartNo, c.prNo, c.userNo, c.qty, p.name, p.price, p.photo, p.inventory 
                 FROM cart c
                 JOIN producttbl p
                 ON c.prNo = p.prNo
@@ -114,6 +114,30 @@ productRouter.get("/cartList", (req, res)=>{
             res.send(cartResult)
         }
    })
+})
+
+productRouter.get("/cartQtyUpdate", (req, res)=>{
+    const {cartNo, qty} = req.query
+    db.query("UPDATE cart SET qty=? WHERE cartNo=?", [qty, cartNo], (err, result)=>{
+        if (err) {
+            res.status(500).send("장바구니 수량 수정 실패");
+            throw err
+        } else {
+            res.send(result)
+        }
+    })
+})
+
+productRouter.get("/cartItemRemove", (req, res)=>{
+    const cartNo = req.query.cartNo
+    db.query("DELETE FROM cart WHERE cartNo=?", [cartNo], (err, result)=>{
+        if (err) {
+            res.status(500).send("장바구니 아이템 삭제 실패");
+            throw err
+        } else {
+            res.send(result)
+        }
+    })
 })
 
 export default productRouter;

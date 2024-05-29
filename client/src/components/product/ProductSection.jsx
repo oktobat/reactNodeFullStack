@@ -90,8 +90,8 @@ const ProductSection = ({title}) => {
         sortFlag.current = !sortFlag.current
     }
 
-    const cartIdCount = (id) => {
-        const userItem = carts.find(value=>value.key==id)
+    const cartIdCount = (pNo) => {
+        const userItem = carts.find(item=>item.prNo==pNo)
         if (userItem) {
             return userItem.qty
         } else {
@@ -103,8 +103,9 @@ const ProductSection = ({title}) => {
         if (user) {
             axios.post("http://localhost:8001/product/cart", {prNo:no, userNo:user.userNo, qty:1 })
             .then((res)=>{
-                if (res.data.affectedRows==1) {
+                if (res.data.affectedRows!=0) {
                     console.log("장바구니 담기 성공")
+                    dispatch(fetchCart(user.userNo))
                 } else {
                     console.log("장바구니 담기 실패")
                 }
