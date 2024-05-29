@@ -43,6 +43,7 @@ const ProductDetailSection = ({product, category}) => {
    const navigate = useNavigate()
    const carts = useSelector(state=>state.products.carts)
    const user = useSelector(state=>state.members.user)
+   const currentPage = useSelector(state=>state.products.currentPage)
    const [modalOpen, setModalOpen] = useState({open:false, what:""})
    const [qty, setQty] = useState(1)
 

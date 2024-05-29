@@ -115,7 +115,7 @@ const CartSection = () => {
             sessionStorage.setItem('previousUrl', '/cart');
             navigate("/login")
         } else {
-            navigate("/payment", {state:{product:tempProducts}})
+            navigate("/payment", {state:{product: {product : carts}}})
         }
     }
 

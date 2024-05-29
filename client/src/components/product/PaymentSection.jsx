@@ -38,6 +38,7 @@ const PaymentSectionBlock = styled.div`
 `
 
 const PaymentSection = ({product}) => {
+    
 
     const user = useSelector(state=>state.members.user)
     console.log(user)
@@ -140,7 +141,7 @@ const PaymentSection = ({product}) => {
                 <tbody>
                     { product.map((item, index)=>(
                         <tr key={index}>
-                            <td><img src={item.product.photo} alt={item.product.name} /> 상품명 : {item.product.name} / 수량 : {item.qty}개 / 가격 : {parseInt(item.product.price).toLocaleString()}원</td>
+                            <td><img src={`http://localhost:8001/uploads/${item.product.photo}`} alt={item.product.name} /> 상품명 : {item.product.name} / 수량 : {item.qty}개 / 가격 : {parseInt(item.product.price).toLocaleString()}원</td>
                             <td style={{textAlign:"right"}}>{(parseInt(item.qty)*parseInt(item.product.price)).toLocaleString()}원</td>
                             <td style={{textAlign:"right"}}>0원</td>
                         </tr>

@@ -6,6 +6,19 @@ import Footer from '@/components/layout/Footer'
 import {useDispatch} from 'react-redux'
 import { ImSpinner } from "react-icons/im";
 
+const Wrap = styled.div`
+    div.cover {
+        position:fixed; top:0; left:0; bottom:0; right:0; background:#fff; 
+        display:flex; align-items:center; justify-content:center;
+        @media screen and (max-width: 768px) { display:none; }
+    }
+    div.container {
+        display:none;
+        @media screen and (max-width: 768px) { display:block; }
+    }
+`
+
+
 const LoadingBlock = styled.div`
     height:100vh;
     display:flex; justify-content:center; align-items:center;
@@ -30,21 +43,27 @@ const Layout = () => {
 
     if (!loading) {
         return (
-            <div>
-                <LoadingBlock>
-                    <ImSpinner className="loadIcon" />
-                </LoadingBlock>
-           </div>
+            <Wrap>
+                <div className="cover">이 사이트는 768px 이하 화면에서만 보입니다.</div>
+                <div className="container">
+                    <LoadingBlock>
+                        <ImSpinner className="loadIcon" />
+                    </LoadingBlock>
+                </div>
+           </Wrap>
         );
     } 
     return (
-        <div>
-            <Header />
-            <main>
-                <Outlet />
-            </main>
-            <Footer />
-        </div>
+        <Wrap>
+            <div className="cover">이 사이트는 768px 이하 화면에서만 보입니다.</div>
+            <div className="container">
+                <Header />
+                <main>
+                    <Outlet />
+                </main>
+                <Footer />
+            </div>
+        </Wrap>
     );
 };
 
