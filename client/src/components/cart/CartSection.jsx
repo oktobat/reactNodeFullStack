@@ -115,7 +115,7 @@ const CartSection = () => {
             sessionStorage.setItem('previousUrl', '/cart');
             navigate("/login")
         } else {
-            navigate("/payment", {state:{product: {product : carts}}})
+            navigate("/payment", {state:{product: carts, path:'cart'}})
         }
     }
 
@@ -137,8 +137,8 @@ const CartSection = () => {
             sessionStorage.setItem('previousUrl', '/cart');
             navigate("/login")
         } else {
-            const selectedProductsData = tempProducts.filter(item => selectedProducts.includes(item.product.id));
-            navigate("/payment", {state:{product:selectedProductsData}})
+            const selectedProductsData = carts.filter(item => selectedProducts.includes(item.prNo));
+            navigate("/payment", {state:{product:selectedProductsData, path:'cart'}})
         }
     }
 

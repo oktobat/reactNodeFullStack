@@ -36,7 +36,7 @@ const Modal = ({modalOpen, onReset, product, qty}) => {
             sessionStorage.setItem('choiceProduct', JSON.stringify({product : [{product, qty}] }))
             navigate("/login")
         } else {
-            navigate("/payment", {state : {product : [{product, qty}] }})
+            navigate("/payment", {state : {product : [{product, qty}], path:'detail' }})
         }
     }
 

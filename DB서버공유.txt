@@ -1,0 +1,18 @@
+B 컴퓨터의 mariaDB 서버 공유하기
+1. C드라이브 > Program Files > MariaDB 11.3 > data > my.ini 파일 열기
+   [mysqld]
+   bind-address=0.0.0.0
+2. 제어판 > Windows Defender 방화벽 > 고급설정 > 인바운드 규칙 > 새규칙
+   "포트" 선택 > "TCP" 선택, "특정 로컬 포트" 선택 : 3306 입력 > 연결허용 > 도메인, 개인, 공용 모두 선택 > 이름과 설명은 마음대로
+3. MariaDB 서버 stop 한 후에 start 할 것
+   net stop mariadb
+   net start mariadb
+   ipconfig 에서 IPv4 주소 확인할 것 : 192.168.100.130
+4. hediSQL 실행해서 사용자 권한 설정할 것
+CREATE USER '사용자아이디'@'%' IDENTIFIED BY '비밀번호';
+GRANT ALL PRIVILEGES ON *.* TO '사용자아이디'@'%' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+
+A컴퓨터
+1. heidiSQL과 db.js에서 호스트명(host)을 '192.168.100.130' 로 하고 4번에서 설정한
+   아이디와 비번으로 연결하면 됨

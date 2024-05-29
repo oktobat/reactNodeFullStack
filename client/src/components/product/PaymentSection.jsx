@@ -37,13 +37,15 @@ const PaymentSectionBlock = styled.div`
 
 `
 
-const PaymentSection = ({product}) => {
-    
-
+const PaymentSection = ({product, path}) => {
+    let total = 0
+    if (path=='cart') {
+        total = product.reduce((acc, item)=>acc+(parseInt(item.price) * parseInt(item.qty)), 0)
+    } else {
+        total = product.reduce((acc, item)=>acc+(parseInt(item.product.price) * parseInt(item.qty)), 0)
+    }
     const user = useSelector(state=>state.members.user)
-    console.log(user)
-    const total = product.reduce((acc, item)=>acc+(parseInt(item.product.price) * parseInt(item.qty)), 0)
-
+    
     const mZipcodeRef = useRef("")
     const mAddressRef = useRef("")
     const mAddressSubRef = useRef("")
@@ -139,13 +141,20 @@ const PaymentSection = ({product}) => {
                     </tr>
                 </thead>
                 <tbody>
-                    { product.map((item, index)=>(
+                    { path=='detail' ? product.map((item, index)=>(
                         <tr key={index}>
                             <td><img src={`http://localhost:8001/uploads/${item.product.photo}`} alt={item.product.name} /> 상품명 : {item.product.name} / 수량 : {item.qty}개 / 가격 : {parseInt(item.product.price).toLocaleString()}원</td>
                             <td style={{textAlign:"right"}}>{(parseInt(item.qty)*parseInt(item.product.price)).toLocaleString()}원</td>
                             <td style={{textAlign:"right"}}>0원</td>
                         </tr>
-                    ))
+                    )) :
+                    product.map((item, index)=>(
+                        <tr key={index}>
+                            <td><img src={`http://localhost:8001/uploads/${item.photo}`} alt={item.name} /> 상품명 : {item.name} / 수량 : {item.qty}개 / 가격 : {parseInt(item.price).toLocaleString()}원</td>
+                            <td style={{textAlign:"right"}}>{(parseInt(item.qty)*parseInt(item.price)).toLocaleString()}원</td>
+                            <td style={{textAlign:"right"}}>0원</td>
+                        </tr>
+                    )) 
                     }
                 </tbody>
                 <tfoot>
