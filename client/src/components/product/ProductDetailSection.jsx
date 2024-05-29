@@ -3,6 +3,8 @@ import styled from 'styled-components'
 import {Link, useNavigate} from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import Modal from '@/components/product/Modal'
+import axios from 'axios'
+import {fetchProduct} from '@/store/product'
 
 const ProductDetailSectionBlock = styled.div`
   h2 {
@@ -35,7 +37,7 @@ const ProductDetailSectionBlock = styled.div`
   }
 `
 
-const ProductDetailSection = ({product}) => {
+const ProductDetailSection = ({product, category}) => {
 
    const dispatch = useDispatch()
    const navigate = useNavigate()
@@ -46,6 +48,21 @@ const ProductDetailSection = ({product}) => {
 
    const onReset = ()=>{
       setModalOpen({open:false, what:""})
+   }
+
+   const removeProduct = (e, pNo)=>{
+      e.preventDefault()
+      axios.get(`http://localhost:8001/product/remove?prNo=${pNo}`)
+      .then(res=>{
+        if (res.data.affectedRows==1) {
+            console.log("삭제성공")
+            dispatch(fetchProduct(currentPage, category))
+            navigate("/product", {state:{page:currentPage, category:category}})
+        } else {
+            console.log("삭제실패")
+        }
+      })
+      .catch(err=>console.log(err))
    }
 
     return (
@@ -82,7 +99,7 @@ const ProductDetailSection = ({product}) => {
                       </>
                       : ""
                       }
-                      { (user && user.userId=='tsalt@hanmail.net') && <Link to="/productModify" state={{ product  }}>상품수정</Link>}
+                      { (user && user.userId=='tsalt@hanmail.net') && <Link to="/productModify" state={{ product, category }}>상품수정</Link>}
                       { (user && user.userId=='tsalt@hanmail.net') && <a href="#" onClick={ (e)=>removeProduct(e, product.prNo) }>상품삭제</a>}
                     </div>
                 </div>

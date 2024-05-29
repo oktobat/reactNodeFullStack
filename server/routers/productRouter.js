@@ -76,6 +76,35 @@ productRouter.get("/list", (req, res)=>{
     })
 })
 
+productRouter.post("/modify", upload.single("photo"), (req, res)=>{
+    const {prNo, category, name, price, description, inventory} = req.body
+    const photo = req.file
+    const query = `UPDATE producttbl 
+                   SET category=?, name=?, price=?, description=?, inventory=?, photo=? 
+                   WHERE prNo=?`
+    const queryparam = [category, name, price, description, inventory, photo.filename, prNo]
+    db.query(query, queryparam, (err, result)=>{
+        if (err) {
+            res.status(500).send("상품정보 수정 실패");
+            throw err
+        } else {
+            res.send(result)
+        }
+    })
+})
+
+productRouter.get("/remove", (req, res)=>{
+    const prNo = req.query.prNo
+    db.query("DELETE FROM producttbl WHERE prNo=?", [prNo], (err, result)=>{
+        if (err) {
+            res.status(500).send("상품 삭제 실패");
+            throw err
+        } else {
+            res.send(result)
+        }
+    })
+})
+
 productRouter.post("/cart", (req, res)=>{
   const {userNo, prNo, qty} = req.body
 

@@ -188,7 +188,7 @@ const ProductSection = ({title}) => {
                 products.map((item, index)=>(
                     <ListBlock key={index}>
                         <div className="photo">
-                            <Link to={`/product/${item.prNo}`} state={{ item : item }}><img src={`http://localhost:8001/uploads/${item.photo}`} alt={item.name} /></Link>
+                            <Link to={`/product/${item.prNo}`} state={{ item:item, title:title }}><img src={`http://localhost:8001/uploads/${item.photo}`} alt={item.name} /></Link>
                         </div>
                         <div className="info">
                             <p><a href="#">{item.name}</a></p>

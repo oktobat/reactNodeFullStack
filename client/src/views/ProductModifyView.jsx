@@ -4,10 +4,10 @@ import ProductModify from '@/components/product/ProductModify'
 
 const ProductModifyView = () => {
     const location = useLocation()
-    const { product } = location.state
+    const { product, category } = location.state
     return (
         <div>
-            <ProductModify item={product} />
+            <ProductModify item={product} title={category} />
         </div>
     );
 };

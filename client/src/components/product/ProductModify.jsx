@@ -1,6 +1,8 @@
 import React, {useState} from 'react';
 import styled from 'styled-components'
 import { useNavigate } from 'react-router-dom'
+import axios from 'axios'
+import { useSelector} from 'react-redux'
 
 const ProductModifyBlock = styled.div`
 max-width:500px; margin:0 auto;
@@ -19,10 +21,13 @@ div {
 }
 `
 
-const ProductModify = ({item}) => {
+const ProductModify = ({item, title}) => {
     const navigate = useNavigate()
-    const { category, name, price, description, inventory, photo} = item
+    const currentPage = useSelector(state=>state.products.currentPage)  
+
+    const {prNo, category, name, price, description, inventory, photo} = item
     const [product, setProduct] = useState({
+        prNo,
         category, 
         name,
         price,
@@ -49,6 +54,33 @@ const ProductModify = ({item}) => {
     const onSubmit = async (e)=>{
         e.preventDefault()
         console.log(product)
+
+        const formData = new FormData();
+        formData.append("prNo", product.prNo)
+        formData.append("category", product.category)
+        formData.append("name", product.name);
+        formData.append("price", product.price);
+        formData.append("description", product.description);
+        formData.append("inventory", product.inventory);
+
+        if (product.photo) {
+            formData.append("photo", product.photo)
+        }
+
+        axios.post("http://localhost:8001/product/modify", formData, {
+            headers : {
+                "Content-Type": "multipart/form-data",
+            }
+        })
+        .then(res=>{
+            if (res.data.affectedRows==1) {
+                navigate("/product", {state:{page:currentPage, category:title}})
+            } else {
+                alert("상품등록 실패")
+                return
+            }
+        })
+        .catch(err=>console.log(err))
     }
 
     return (
@@ -84,7 +116,7 @@ const ProductModify = ({item}) => {
                     <input type="file" name="photo" id="photo" value={photoValue} onChange={handleFileChange} />
                 </div>
                 <div className="btn">
-                    <button type="submit">등록</button>
+                    <button type="submit">상품수정</button>
                 </div>
             </form>
         </ProductModifyBlock>
