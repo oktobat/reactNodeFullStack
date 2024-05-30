@@ -1,11 +1,41 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Link} from 'react-router-dom'
-import dayjs from 'dayjs'
-import { useDispatch} from 'react-redux'
+import { useDispatch, useSelector} from 'react-redux'
+import axios from 'axios'
+import { fetchCart, fetchOrder } from '@/store/product'
 
-const PaymentFinishSection = ({userKey, product}) => {
-    
+const PaymentFinishSection = ({product, path}) => {
+    console.log("구매구매상품", product)
+    const [orderProduct, setOrderProduct] = useState(null)
     const dispatch = useDispatch()    
+    const user = useSelector(state=>state.members.user)
+
+    useEffect(() => {
+        if (path === 'cart') {
+            setOrderProduct(product);
+        } else {
+            setOrderProduct([{prNo:product[0].product.prNo, qty:product[0].qty, userNo:user.userNo}]);
+        }
+    }, [path, product, user?.userNo]);
+
+    useEffect(() => {
+        if (orderProduct !== null) {
+            axios.post("http://localhost:8001/product/order", { orderProduct })
+                .then(res => {
+                    console.log("꼭찍", res);
+                    if (res.data=="성공") {
+                        console.log("결제, 주문추가, 장바구니삭제, 재고수정 성공");
+                        console.log(user.userNo)
+                        dispatch(fetchOrder(user.userNo));
+                        dispatch(fetchCart(user.userNo));
+                    } else {
+                        console.log("결제, 주문추가, 장바구니삭제, 재고수정 실패");
+                    }
+                })
+                .catch(err => console.log(err));
+        }
+    }, [orderProduct, dispatch, user.userNo]);
+
 
     return (
         <div>

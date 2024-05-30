@@ -1,6 +1,7 @@
 import express from 'express'
 import { db } from '../db.js'
 import multer from "multer"     // multer 미들웨어를 사용하여 파일 업로드를 처리함
+import dayjs from 'dayjs'
 
 const productRouter = express.Router()
 
@@ -167,6 +168,115 @@ productRouter.get("/cartItemRemove", (req, res)=>{
             res.send(result)
         }
     })
+})
+
+productRouter.post('/order', (req, res) => {
+    let connection;
+    try {
+        connection = db.getConnection((err, connection) => {
+            if (err) {
+                console.error('Error getting connection from pool:', err);
+                res.status(500).send('실패');
+                return;
+            }
+
+            connection.beginTransaction((err) => {
+                if (err) {
+                    console.error('Error beginning transaction:', err);
+                    res.status(500).send('실패');
+                    connection.release();
+                    return;
+                }
+
+                const orderProduct = req.body.orderProduct;
+                const orderDate = dayjs().format('YYYY-MM-DD HH:mm:ss');
+                const orderQuery = 'INSERT INTO `order` (userNo, orderDate, prNo, qty) VALUES (?, ?, ?, ?)';
+                const deleteCartQuery = 'DELETE FROM `cart` WHERE cartNo=?';
+                const updateInventoryQuery = 'UPDATE `producttbl` SET inventory = inventory - ? WHERE prNo = ?';
+
+                const promises = orderProduct.map((item) => {
+                    const { cartNo, userNo, prNo, qty } = item;
+                    return new Promise((resolve, reject) => {
+                        connection.query(orderQuery, [userNo, orderDate, prNo, qty], (err, orderResult) => {
+                            if (err) {
+                                console.error('주문 목록 추가 실패:', err);
+                                reject('주문 목록 추가 실패');
+                            } else {
+                                console.log("주문 성공")
+                                connection.query(deleteCartQuery, [cartNo], (err, deleteResult) => {
+                                    if (err) {
+                                        console.error('장바구니 항목 삭제 실패:', err);
+                                        reject(err);
+                                    } else {
+                                        connection.query(updateInventoryQuery, [qty, prNo], (err, updateResult) => {
+                                            if (err) {
+                                                console.error('재고 감소 실패:', err);
+                                                reject(err);
+                                            } else {
+                                                console.log("주문 성공, 장바구니 항목 삭제 및 재고 감소 성공");
+                                                resolve();
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    });
+                });
+
+                Promise.all(promises)  // 여러 개의 프로미스를 동시에 처리하고, 모든 프로미스가 완료될 때까지 기다린 후에 결과를 반환하는 메서드.
+                    .then(() => {
+                        connection.commit((err) => {
+                            if (err) {
+                                console.error('Error committing transaction:', err);
+                                res.status(500).send('실패');
+                                connection.rollback(() => {
+                                    connection.release();
+                                });
+                                return;
+                            }
+                            console.log('Transaction successfully committed.');
+                            connection.release();
+                            res.send('성공');
+                        });
+                    })
+                    .catch((err) => {
+                        console.error('Error in Promise.all:', err);
+                        res.status(500).send('실패');
+                        connection.rollback(() => {
+                            connection.release();
+                        });
+                    });
+            });
+        });
+    } catch (err) {
+        console.error('주문 실패:', err);
+        res.status(500).send('실패');
+        if (connection) {
+            connection.rollback(() => {
+                connection.release();
+            });
+        }
+    }
+});
+
+productRouter.get("/myOrderList", (req, res)=>{
+   const userNo = req.query.no
+   const query = `
+                SELECT o.orderNo, o.userNo, o.orderDate, o.qty, p.prNo, p.name, p.price, p.photo 
+                FROM  \`order\` o
+                JOIN producttbl p
+                ON o.prNo = p.prNo
+                WHERE o.userNo = ?
+                `
+   db.query(query, [userNo], (err, result)=>{
+        if (err) {
+            res.status(500).send("마이주문 목록 검색 실패");
+            throw err
+        } else {
+            res.send(result)
+        }
+   })
 })
 
 export default productRouter;

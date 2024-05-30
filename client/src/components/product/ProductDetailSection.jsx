@@ -4,7 +4,7 @@ import {Link, useNavigate} from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import Modal from '@/components/product/Modal'
 import axios from 'axios'
-import {fetchProduct} from '@/store/product'
+import {fetchProduct, fetchCart} from '@/store/product'
 
 const ProductDetailSectionBlock = styled.div`
   h2 {
@@ -66,6 +66,37 @@ const ProductDetailSection = ({product, category}) => {
       .catch(err=>console.log(err))
    }
 
+   const handleChange = (e)=>{
+      let newQty = parseInt(e.target.value)
+      if (newQty<1) {
+        newQty = 1
+      }
+      if (newQty>product.inventory) {
+          newQty = product.inventory
+      }
+      setQty(newQty)
+   }
+
+   const addToCart = async (no)=>{
+    if (user) {
+        axios.post("http://localhost:8001/product/cart", {prNo:no, userNo:user.userNo, qty:qty })
+        .then((res)=>{
+            if (res.data.affectedRows!=0) {
+                console.log("장바구니 담기 성공")
+                dispatch(fetchCart(user.userNo))
+                setModalOpen({open:true, what:"cart"});
+            } else {
+                console.log("장바구니 담기 실패")
+            }
+        })
+        .catch(err=>console.log(err))
+    } else {
+        alert("로그인을 해주세요.")
+        sessionStorage.setItem('previousUrl', '/product');
+        navigate("/login")
+    }
+}
+
     return (
         <ProductDetailSectionBlock className="row"> 
             <h2>{ product.name }</h2>
@@ -79,7 +110,7 @@ const ProductDetailSection = ({product, category}) => {
                     <p>가격 : { product.price.toLocaleString() }</p>
                     <p>요약설명 : <span dangerouslySetInnerHTML={{ __html: product.description }} /></p>
                     <p>
-                      구매수량 : { product.inventory ? <input id="quantity" type="number" value={qty} /> : <span>품절!</span> }
+                      구매수량 : { product.inventory ? <input id="quantity" type="number" value={qty} onChange={handleChange} /> : <span>품절!</span> }
                     </p>
                     <p>
                       고객만족도 : <span style={{marginRight:'10px'}}>{Math.round(product.averageRating*100)/100}점</span>
@@ -95,7 +126,7 @@ const ProductDetailSection = ({product, category}) => {
                     <div className="btn">
                     { product.inventory ?
                       <>
-                        <a href="#" onClick={(e)=>{e.preventDefault();  }}>장바구니</a>
+                        <a href="#" onClick={(e)=>{e.preventDefault(); addToCart(product.prNo); }}>장바구니</a>
                         <a href="#" onClick={(e)=>{e.preventDefault(); setModalOpen({open:true, what:"buy"})}}>구매하기</a>
                       </>
                       : ""

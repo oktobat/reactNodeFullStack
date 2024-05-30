@@ -52,4 +52,16 @@ export const fetchCart = (userNo) => (dispatch)=>{
     .catch(err=>console.log(err))
 }
 
+
+export const fetchOrder = (userNo) => (dispatch)=>{
+    axios.get(`http://localhost:8001/product/myOrderList?no=${userNo}`)
+    .then((res)=>{
+        console.log("주문목록", res)
+        const data = res.data;
+        dispatch(initOrders(data))
+    })
+    .catch(err=>console.log(err))
+}
+
+
 export default productSlice.reducer;

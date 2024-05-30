@@ -242,7 +242,7 @@ const PaymentSection = ({product, path}) => {
                 </tbody>
             </table>
             <div style={{ textAlign:'center'}}>
-                <Link to="/paymentFinish" state={{ product }} style={{ padding:'10px', background:'red', color:'#fff'}}>결제하기</Link>
+                <Link to="/paymentFinish" state={{ product, path }} style={{ padding:'10px', background:'red', color:'#fff'}}>결제하기</Link>
             </div>
         </PaymentSectionBlock>
     );
