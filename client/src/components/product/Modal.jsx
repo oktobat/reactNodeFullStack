@@ -25,7 +25,6 @@ const ModalBlock = styled.div`
 `
 
 const Modal = ({modalOpen, onReset, product, qty}) => {
-    
     const navigate = useNavigate()
     const user = useSelector(state=>state.members.user)
 

@@ -146,7 +146,10 @@ const CartSection = () => {
         if (carts.length) {
             setTotal(carts.reduce((acc, item)=>acc+(parseInt(item.price) * parseInt(item.qty)), 0))
             setAllCount(carts.reduce((acc, item)=>acc+(parseInt(item.qty)), 0))
-        } 
+        } else {
+            setTotal(0)
+            setAllCount(0)
+        }
     }, [carts]);
 
     return (

@@ -152,7 +152,6 @@ const ProductSection = ({title}) => {
 
     useEffect(()=>{
         dispatch(fetchProduct(currentPage, title))
-        // dispatch(fetchCart(user.userNo))
     }, [dispatch, currentPage, title])
 
     useEffect(()=>{
