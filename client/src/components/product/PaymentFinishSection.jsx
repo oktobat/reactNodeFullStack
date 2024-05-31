@@ -28,6 +28,7 @@ const PaymentFinishSection = ({product, path}) => {
                         console.log(user.userNo)
                         dispatch(fetchOrder(user.userNo));
                         dispatch(fetchCart(user.userNo));
+                        dispatch(fetchProduct(1, 'all'));
                     } else {
                         console.log("결제, 주문추가, 장바구니삭제, 재고수정 실패");
                     }

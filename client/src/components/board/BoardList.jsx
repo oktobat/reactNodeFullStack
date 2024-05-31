@@ -2,7 +2,7 @@ import React, {useEffect} from 'react';
 import styled from 'styled-components'
 import {Link} from 'react-router-dom'
 import {useSelector, useDispatch} from 'react-redux'
-import { changeType, fetchNotice, setPage } from '@/store/board'
+import { changeType, fetchNotice, fetchReview, setPage } from '@/store/board'
 import dayjs from 'dayjs'
 
 const BoardListBlock = styled.div`
@@ -41,11 +41,20 @@ const BoardList = () => {
     useEffect(()=>{
         if (type=="notice") {
             dispatch(changeType("notice"))
-            dispatch(fetchNotice(currentPage))
+            dispatch(fetchNotice(1))
         } else {
             dispatch(changeType("review"))
+            dispatch(fetchReview(1))
         }
-    }, [dispatch, type, currentPage])
+    }, [dispatch, type])
+
+    useEffect(()=>{
+        if (type=="notice") {
+            dispatch(fetchNotice(currentPage))
+        } else {
+            dispatch(fetchReview(currentPage))
+        }
+    }, [dispatch, currentPage])
 
     return (
         <BoardListBlock>

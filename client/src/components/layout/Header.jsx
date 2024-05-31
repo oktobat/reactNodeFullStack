@@ -9,6 +9,7 @@ import { BsCartPlusFill  } from "react-icons/bs";
 import { useSelector, useDispatch } from 'react-redux';
 import {initCarts, fetchCart } from '@/store/product'
 import { userLogout, localUser } from '@/store/member'
+import { fetchReview } from '@/store/board'
 import { useMediaQuery } from 'react-responsive'
 import axios from 'axios'
 
@@ -139,6 +140,7 @@ const Header = () => {
         .then((res)=>{
            dispatch(localUser(res.data[0]))
            dispatch(fetchCart(user?.userNo))
+           dispatch(fetchReview(1))
         })
         .catch(err=>console.log(err))
       } 

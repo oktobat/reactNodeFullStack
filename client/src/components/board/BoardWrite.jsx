@@ -20,7 +20,7 @@ table {
 }
 `
 
-const BoardWrite = ({ type }) => {
+const BoardWrite = ({ type, orderItem }) => {
     const user = useSelector(state=>state.members.user)
     const navigate = useNavigate()
 
@@ -57,7 +57,15 @@ const BoardWrite = ({ type }) => {
             })
             .catch(err=>console.log(err.toJSON()))
         } else if (type=="review") {
-            
+            axios.post("http://localhost:8001/board/review/write", { subject:orderItem.name, content:board.content, rating, prNo:orderItem.prNo, writer:user.userId, orderNo:orderItem.orderNo })
+            .then((res)=>{
+                if (res.data.affectedRows==1) {
+                    navigate("/boardList", {state:{page:1}})
+                } else {
+                    alert("글이 등록되지 않았습니다.")
+                }
+            })
+            .catch(err=>console.log(err.toJSON()))
         }
     }
 
@@ -101,7 +109,7 @@ const BoardWrite = ({ type }) => {
                             :
                             <tr>
                                 <td>상품명</td>
-                                <td><input type="text" name="subject" value={product.name} disabled /></td>
+                                <td><input type="text" name="subject" value={orderItem.name} disabled /></td>
                             </tr>
                         }
                         <tr>
@@ -112,7 +120,7 @@ const BoardWrite = ({ type }) => {
                 </table>
                 <div class="btn">
                     <button type="submit">작성</button>
-                    <Link to="/boardList">목록</Link>
+                    <Link to="/boardList" state={{ page:1}}>목록</Link>
                 </div>
             </form>
         </BoardWriteBlock>

@@ -20,13 +20,17 @@ const boardSlice = createSlice({
         },
         initReview(state, action){
             state.review = action.payload.data
+            state.list = action.payload.data
+            state.totalCount = action.payload.totalCount;
         },
         changeType(state, action){
             state.type = action.payload
             if (state.type=="notice") {
                 state.list = state.notice
+                state.currentPage = 1
             } else if (state.type=="review") {
                 state.list = state.review
+                state.currentPage = 1
             }
         },
         setPage(state, action) {
@@ -47,5 +51,14 @@ export const fetchNotice = (page) => (dispatch) =>{
     .catch(err=>console.log(err))
 }
 
+export const fetchReview = (page) => (dispatch) =>{
+    axios.get(`http://localhost:8001/board/review/list?page=${page}`)
+    .then((res)=>{
+        console.log("공지글", res)
+        const { totalCount, data} = res.data;
+        dispatch(initReview({ totalCount : totalCount, data : data }))
+    })
+    .catch(err=>console.log(err))
+}
 
 export default boardSlice.reducer;

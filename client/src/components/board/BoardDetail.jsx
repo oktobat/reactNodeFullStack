@@ -42,7 +42,16 @@ const BoardDetail = ({post}) => {
             })
             .catch(err=>console.log(err))
         } else if (type=="review") {
-            reviewDB.child(post.key).remove()
+            axios.get(`http://localhost:8001/board/review/remove?no=${post.reNo}`)
+            .then((res)=>{
+                if (res.data.affectedRows==1) {
+                    navigate("/boardList", { state : {page : currentPage }})
+                } else {
+                    alert("삭제하지 못했습니다.")
+                    return 
+                }
+            })
+            .catch(err=>console.log(err))
         }
     }
 
@@ -58,9 +67,15 @@ const BoardDetail = ({post}) => {
             })
             .catch(err=>console.log(err.toJSON()))
         } else if (type=="review") {
-            reviewDB.child(post.key).update({
-                'hit' : post.hit+1
+            axios.get(`http://localhost:8001/board/review/hit?no=${post.reNo}&hit=${post.hit}`)
+            .then((res)=>{
+                if (res.data.affectedRows==1) {
+                    console.log("증가했습니다.")
+                } else {
+                    console.log("증가하지 못했습니다.")
+                }
             })
+            .catch(err=>console.log(err.toJSON()))
         }
     }, [])
 
@@ -102,7 +117,7 @@ const BoardDetail = ({post}) => {
                             :
                             <tr>
                                 <td>상품명</td>
-                                <td><input type="text" name="subject" value={post.product.name} disabled /></td>
+                                <td><input type="text" name="subject" value={post.subject} disabled /></td>
                             </tr>
                         }
                     <tr>

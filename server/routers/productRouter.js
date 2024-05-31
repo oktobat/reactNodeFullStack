@@ -21,7 +21,7 @@ const upload = multer({ storage: storage });
 productRouter.post("/register", upload.single("photo"), (req, res)=>{
     const { category, name, price, description, inventory} = req.body
     const photo = req.file   // 
-    db.query("INSERT INTO producttbl (category, name, price, description, inventory, photo) VALUES (?, ?, ?, ?, ?, ?)", [category, name, price, description, inventory, photo.filename], (err, result)=>{
+    db.query("INSERT INTO producttbl (category, name, price, description, inventory, photo, reviewCount, averageRating) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", [category, name, price, description, inventory, photo.filename, 0, 0], (err, result)=>{
         if (err) {
             res.status(500).send("상품등록 실패");
             throw err
@@ -184,11 +184,13 @@ productRouter.post('/order', (req, res) => {
                 if (err) {
                     console.error('Error beginning transaction:', err);
                     res.status(500).send('실패');
-                    connection.release();
+                    connection.release();  // connection 자원 반납
                     return;
                 }
 
                 const orderProduct = req.body.orderProduct;
+                // 상세페이지 구매하기 : [{ prNo, qty, userNo }]
+                // 장바구니 페이지 : [ {cartNo, userNo, qty, prNo, name, photo, inventory }, { }... ]
                 const orderDate = dayjs().format('YYYY-MM-DD HH:mm:ss');
                 const orderQuery = 'INSERT INTO `order` (userNo, orderDate, prNo, qty) VALUES (?, ?, ?, ?)';
                 const deleteCartQuery = 'DELETE FROM `cart` WHERE cartNo=?';
@@ -208,6 +210,7 @@ productRouter.post('/order', (req, res) => {
                                         console.error('장바구니 항목 삭제 실패:', err);
                                         reject(err);
                                     } else {
+                                        console.log("장바구니 삭제 성공")
                                         connection.query(updateInventoryQuery, [qty, prNo], (err, updateResult) => {
                                             if (err) {
                                                 console.error('재고 감소 실패:', err);

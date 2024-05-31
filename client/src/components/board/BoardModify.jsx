@@ -27,7 +27,6 @@ const BoardModify = ({post}) => {
     const navigate = useNavigate()
 
     const [board, setBoard] = useState({
-        noNo : post.noNo,
         subject:post.subject,
         content:post.content
     })
@@ -47,7 +46,7 @@ const BoardModify = ({post}) => {
     const onSubmit = (e)=>{
         e.preventDefault()
         if (type=="notice") {
-           axios.post("http://localhost:8001/board/notice/modify", { board : board })
+           axios.post("http://localhost:8001/board/notice/modify", { noNo:post.noNo, subject:board.subject, content:board.content })
            .then((res)=>{
                 if (res.data.affectedRows==1) {
                     navigate("/boardList", {state : { page : currentPage}})
@@ -58,10 +57,16 @@ const BoardModify = ({post}) => {
            })
            .catch(err=>console.log(err.toJSON()))
         } else if (type=="review") {
-            reviewDB.child(post.key).update({
-                rating : rating,
-                content : board.content
-             })
+            axios.post("http://localhost:8001/board/review/modify", { reNo:post.reNo, subject:board.subject, content:board.content, rating:rating })
+           .then((res)=>{
+                if (res.data.affectedRows==1) {
+                    navigate("/boardList", {state : { page : currentPage}})
+                } else {
+                    alert("수정하지 못했습니다.")
+                    return
+                }
+           })
+           .catch(err=>console.log(err.toJSON()))
         }
     }
 
@@ -105,7 +110,7 @@ const BoardModify = ({post}) => {
                             :
                             <tr>
                                 <td>상품명</td>
-                                <td><input type="text" name="subject" value={post.product.name} disabled /></td>
+                                <td><input type="text" name="subject" value={board.subject} disabled /></td>
                             </tr>
                         }
                         <tr>
