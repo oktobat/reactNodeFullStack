@@ -203,7 +203,7 @@ const ProductSection = ({title}) => {
                                }
                                <span style={{marginLeft:"10px"}}>{item.reviewCount}</span>건
                             </p>
-                            { item.inventory!=cartIdCount(item.prNo) ? 
+                            { item.inventory > cartIdCount(item.prNo) ? 
                                 <>
                                     <button onClick={ ()=>addToCart(item.prNo) }><BsCartPlusFill /></button> 
                                     <span>{ item.inventory - cartIdCount(item.prNo) }개 남았습니다.</span>

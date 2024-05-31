@@ -42,7 +42,7 @@ const BoardDetail = ({post}) => {
             })
             .catch(err=>console.log(err))
         } else if (type=="review") {
-            axios.get(`http://localhost:8001/board/review/remove?no=${post.reNo}`)
+            axios.get(`http://localhost:8001/board/review/remove?reNo=${post.reNo}&prNo=${post.prNo}`)
             .then((res)=>{
                 if (res.data.affectedRows==1) {
                     navigate("/boardList", { state : {page : currentPage }})
