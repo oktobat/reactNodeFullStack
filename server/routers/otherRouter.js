@@ -115,7 +115,7 @@ otherRouter.post('/movie/myMovieLike', (req, res)=>{
                         });
                     }
                     
-                    const  selectLikeQuery = 'SELECT Count(*) AS count FROM movielike WHERE userNo=? AND isLiked = 1';
+                    const  selectLikeQuery = 'SELECT Count(*) AS count FROM movielike WHERE userNo=? AND isLiked=1';
                     connection.query(selectLikeQuery, [userNo], (err, result)=>{
                         if (err) {
                             return connection.rollback(() => {
