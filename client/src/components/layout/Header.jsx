@@ -12,6 +12,7 @@ import { userLogout, localUser } from '@/store/member'
 import { fetchReview } from '@/store/board'
 import { useMediaQuery } from 'react-responsive'
 import axios from 'axios'
+import { FaRegHeart } from "react-icons/fa";
 
 const HeaderBlock = styled.div`
   text-align: center;
@@ -70,7 +71,7 @@ const ItemCount = styled.div`
 const Hamburger = styled.div`
   position: absolute;
   top: 20px;
-  right: 110px;
+  right: 150px;
   font-size: 30px;
   color: blue;
 `
@@ -116,7 +117,13 @@ const MobileNav = styled.nav`
     }
   }
 `
-
+const MyLike = styled.div`
+  position: absolute;
+  top: 20px;
+  right: 110px;
+  font-size: 30px;
+  color: blue;
+`
 const Header = () => {
     const navigate = useNavigate()
     const mobile = useMediaQuery({ maxWidth:768 })
@@ -173,6 +180,11 @@ const Header = () => {
                 { cartsCount ? <span>{ cartsCount }</span> : ""}
               </Link>
             </ItemCount>
+            <MyLike>
+              <Link to="/movieLike">
+                <FaRegHeart />
+              </Link>
+            </MyLike>
             <MyOrder>
               <Link to="/myOrder">
                 <FaRegUser />

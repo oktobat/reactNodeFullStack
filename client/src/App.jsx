@@ -21,6 +21,7 @@ import BoardModifyView from '@/views/BoardModifyView'
 import PaymentView from '@/views/PaymentView'
 import PaymentFinishView from '@/views/PaymentFinishView'
 import MyOrderView from '@/views/MyOrderView'
+import MovieLikeView from '@/views/MovieLikeView'
 
 const App = () => {
   return (
@@ -30,6 +31,7 @@ const App = () => {
         <Route path="/actor" element={ <ActorView />} />
         <Route path="/artist" element={ <ArtistView />} />
         <Route path="/movie" element={ <MovieView />} />
+        <Route path="/movieLike" element={ <MovieLikeView /> } />
         <Route path="/theater" element={ <TheaterView />} />
         <Route path="/product" element={ <ProductView />} />
         <Route path="/product/:id" element={ <ProductDetailView />} />
