@@ -49,9 +49,12 @@ const MovieSection = ({movies}) => {
             axios.post('http://localhost:8001/other/movie/likeList', { userNo: user.userNo })
             .then(res=>{
                 if (res.data) {
-                    console.log("좋아요리스트", res.data);
-                    const newHearts = res.data.map(item => ({ movieId: item.movieId, isLiked: item.isLiked }));
-                    setHearts(newHearts);
+                    let initialHearts = movies.map(movie => ({ movieId: movie.id, isLiked: 0 }));
+                    const updatedHearts = initialHearts.map(heart => {
+                        const dbHeart = res.data.find(item => item.movieId === heart.movieId);
+                        return dbHeart ? { ...heart, isLiked: dbHeart.isLiked } : heart;
+                    });
+                    setHearts(updatedHearts);
                 } else {
                     console.log("저장실패");
                 }
@@ -60,15 +63,32 @@ const MovieSection = ({movies}) => {
                 console.error("좋아요 상태 전송 중 오류 발생:", error);
             });
         } else {
-            setHearts(movies.map(movie => ({ movieId: movie.id, isLiked: 0 })));
+            
         }
     }, [user, movies])
 
     const onToggle = (movieItem)=>{
         if (user) {
+           console.log("하트들", hearts)
            const updatedHearts =  hearts.map((heart)=> heart.movieId==movieItem.id ? {...heart, isLiked:!heart.isLiked } : heart );
            setHearts(updatedHearts)
+           axios.post('http://localhost:8001/other/movie/likeToggle', { movie: movieItem, userNo: user.userNo })
+           .then(res => {
+                if (res.data) {
+                    console.log("좋아요 리스트 업데이트", res.data);
+                    setHearts(res.data);
+                } else {
+                    console.log("좋아요 저장 실패");
+                }
+            })
+            .catch(error => {
+                console.error("좋아요 상태 전송 중 오류 발생:", error);
+                setHearts(prevHearts => prevHearts.map((heart, i) =>
+                    i === index ? { ...heart, isliked: !heart.isliked } : heart
+                ));
+            });
         } else {
+            console.log("하트들", hearts)
             alert("로그인을 해주세요.")
             // sessionStorage.setItem('previousUrl', '/movie');
             // navigate("/login")
