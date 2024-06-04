@@ -76,7 +76,7 @@ const CartSection = () => {
             [cNo]: newQty
         }));
         if (user) {
-            axios.get(`http://localhost:8001/product/cartQtyUpdate?cartNo=${cNo}&qty=${newQty}`)
+            axios.put(`http://localhost:8001/product/cartQtyUpdate`, {cartNo:cNo, qty:newQty})
             .then((res) => {
                 if (res.data.affectedRows==1) {
                     console.log("장바구니 수량 업데이트 성공")
@@ -93,7 +93,7 @@ const CartSection = () => {
 
     const removeCartItem = (cNo)=>{
         if (user) {
-            axios.get(`http://localhost:8001/product/cartItemRemove?cartNo=${cNo}`)
+            axios.delete(`http://localhost:8001/product/cartItemRemove`, {params:{cartNo:cNo}})
             .then((res) => {
                 if (res.data.affectedRows==1) {
                     console.log("장바구니 아이템 삭제 성공")

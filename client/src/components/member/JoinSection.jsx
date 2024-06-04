@@ -90,7 +90,7 @@ const JoinSection = () => {
     }
     
     const idCheck = (value)=>{
-        axios.post("http://localhost:8001/auth/idcheck", {userId:value})
+        axios.get("http://localhost:8001/auth/idcheck", {params:{userId:value}})
         .then((res)=>{
             console.log(res)   
             if (res.data[0]) {

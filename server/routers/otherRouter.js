@@ -4,8 +4,8 @@ import dayjs from 'dayjs'
 
 const otherRouter = express.Router()
 
-otherRouter.post('/movie/likeList', (req, res)=>{
-   const userNo = req.body.userNo
+otherRouter.get('/movie/likeList', (req, res)=>{
+   const userNo = req.query.userNo
    db.query('SELECT * FROM movielike WHERE userNo=?', [userNo], (err, result)=>{
         if (err) {
             throw err
@@ -196,7 +196,7 @@ otherRouter.post('/movie/myMovieLike', (req, res)=>{
     }
 })
 
-otherRouter.delete('/movie/likeRemove', (req, res)=>{
+otherRouter.post('/movie/likeRemove', (req, res)=>{
     let connection;
     try {
         connection = db.getConnection((err, connection)=>{
@@ -213,7 +213,7 @@ otherRouter.delete('/movie/likeRemove', (req, res)=>{
                     return;
                 }
 
-                const {no, userNo} = req.query
+                const {no, userNo} = req.body
                 const deleteLikeQuery = `DELETE FROM movielike WHERE no=?`
                 connection.query(deleteLikeQuery, [no], (err, result)=>{
                     if (err) {

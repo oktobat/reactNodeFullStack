@@ -67,7 +67,7 @@ const ProductModify = ({item, title}) => {
             formData.append("photo", product.photo)
         }
 
-        axios.post("http://localhost:8001/product/modify", formData, {
+        axios.put("http://localhost:8001/product/modify", formData, {
             headers : {
                 "Content-Type": "multipart/form-data",
             }

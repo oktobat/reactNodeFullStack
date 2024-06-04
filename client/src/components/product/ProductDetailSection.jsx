@@ -53,7 +53,7 @@ const ProductDetailSection = ({product, category}) => {
 
    const removeProduct = (e, pNo)=>{
       e.preventDefault()
-      axios.get(`http://localhost:8001/product/remove?prNo=${pNo}`)
+      axios.delete(`http://localhost:8001/product/remove`, {params:{prNo:pNo}})
       .then(res=>{
         if (res.data.affectedRows==1) {
             console.log("삭제성공")
@@ -92,7 +92,9 @@ const ProductDetailSection = ({product, category}) => {
         .catch(err=>console.log(err))
     } else {
         alert("로그인을 해주세요.")
+        const state = { page: 1, category: 'all' };
         sessionStorage.setItem('previousUrl', '/product');
+        sessionStorage.setItem('previousState', JSON.stringify(state));
         navigate("/login")
     }
 }

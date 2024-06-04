@@ -46,6 +46,7 @@ const LoginSection = () => {
     const userPwRef = useRef("")
 
     const previousUrl = sessionStorage.getItem('previousUrl');
+    const previousState = sessionStorage.getItem('previousState');
     const choiceProduct = sessionStorage.getItem('choiceProduct')
 
     const handleLogin = (e)=>{
@@ -61,7 +62,7 @@ const LoginSection = () => {
             return
         }
         
-        axios.post("http://localhost:8001/auth/login", { userId, userPw })
+        axios.get("http://localhost:8001/auth/login", {params:{ userId, userPw }})
         .then((res)=>{
             if (res.data[0]) {
                 console.log("회원입니다.", res.data[0])
@@ -70,7 +71,12 @@ const LoginSection = () => {
                 if (previousUrl=='/payment') {
                     navigate(previousUrl, {state:JSON.parse(choiceProduct)})
                     sessionStorage.removeItem('previousUrl')
-                } else if (previousUrl=='/product' || previousUrl=='/cart'){
+                } else if (previousUrl=='/product' &&  previousState){
+                    const state = JSON.parse(previousState);
+                    navigate(previousUrl, {state})
+                    sessionStorage.removeItem('previousUrl')
+                    sessionStorage.removeItem('previousState')
+                } else if (previousUrl=='/cart'){
                     navigate(previousUrl)
                     sessionStorage.removeItem('previousUrl')
                 } else {

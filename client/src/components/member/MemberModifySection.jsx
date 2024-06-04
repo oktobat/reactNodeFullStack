@@ -69,7 +69,7 @@ const MemberModifySection = () => {
             return
         }
         
-        axios.post("http://localhost:8001/auth/modify", { userInfo:userInfo })
+        axios.put("http://localhost:8001/auth/modify", { userInfo:userInfo })
         .then((res)=>{
             if (res.data.affectedRows==1) {
                 alert("정보가 수정되었습니다.")
@@ -87,7 +87,7 @@ const MemberModifySection = () => {
         e.preventDefault()
         const answer = confirm("정말로 탈퇴하시겠습니까?")
         if (answer) {
-            axios.post("http://localhost:8001/auth/remove", { userNo : userInfo.userNo })
+            axios.delete("http://localhost:8001/auth/remove", {params: { userNo : userInfo.userNo }})
             .then((res)=>{
                 console.log("탈퇴성공", res)
                 if (res.data.affectedRows==1) {

@@ -143,7 +143,7 @@ const Header = () => {
     useEffect(()=>{
       if (localStorage.getItem('loging')) {
         const {userNo} = JSON.parse(localStorage.getItem('loging'))
-        axios.post("http://localhost:8001/auth/refresh", {userNo})
+        axios.get("http://localhost:8001/auth/refresh", {params:{userNo}})
         .then((res)=>{
            dispatch(localUser(res.data[0]))
            dispatch(fetchCart(user?.userNo))

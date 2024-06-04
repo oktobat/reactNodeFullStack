@@ -35,7 +35,7 @@ const MovieLikeSection = () => {
 
     const onRemove = (likeNo)=>{
         setMyMovieLike(myMovieLike.filter(item=>item.no!=likeNo))
-        axios.delete('http://localhost:8001/other/movie/likeRemove', {params:{no:likeNo, userNo:user.userNo}})
+        axios.post('http://localhost:8001/other/movie/likeRemove', {no:likeNo, userNo:user.userNo})
         .then(res=>{
             if (res.data) {
                 setMyMovieLike(res.data)

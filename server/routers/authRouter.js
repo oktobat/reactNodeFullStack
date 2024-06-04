@@ -16,8 +16,8 @@ authRouter.post('/join', (req, res)=>{
    })
 })
 
-authRouter.post('/idcheck', (req, res)=>{
-    const userId = req.body.userId
+authRouter.get('/idcheck', (req, res)=>{
+    const userId = req.query.userId
     db.query("SELECT * FROM membertbl WHERE userId=?", [userId], (err, result)=>{
         if (err) {
             throw err
@@ -27,9 +27,8 @@ authRouter.post('/idcheck', (req, res)=>{
     })
  })
 
- authRouter.post('/login', (req, res)=>{
-    const userId = req.body.userId
-    const userPw = req.body.userPw
+ authRouter.get('/login', (req, res)=>{
+    const {userId, userPw} = req.query
     db.query("SELECT * FROM membertbl WHERE userId=? AND userPw=?", [userId, userPw], (err, result)=>{
         if (err){
             throw err
@@ -39,8 +38,8 @@ authRouter.post('/idcheck', (req, res)=>{
     })
 })
 
-authRouter.post('/refresh', (req, res)=>{
-    const userNo = req.body.userNo
+authRouter.get('/refresh', (req, res)=>{
+    const userNo = req.query.userNo
     db.query("SELECT * FROM membertbl WHERE userNo=?", [userNo], (err, result)=>{
         if (err){
             throw err
@@ -50,7 +49,7 @@ authRouter.post('/refresh', (req, res)=>{
     })
 })
 
-authRouter.post('/modify', (req, res)=>{
+authRouter.put('/modify', (req, res)=>{
     const {userNo, userPw, userIrum, handphone, zipCode, addr1, addr2 } = req.body.userInfo
     db.query("UPDATE membertbl SET userPw=?, userIrum=?, handphone=?, zipCode=?, addr1=?, addr2=? WHERE userNo=?", [userPw, userIrum, handphone, zipCode, addr1, addr2, userNo], (err, result)=>{
          if (err) {
@@ -61,8 +60,8 @@ authRouter.post('/modify', (req, res)=>{
     })
  })
 
- authRouter.post('/remove', (req, res)=>{
-    const userNo = req.body.userNo
+ authRouter.delete('/remove', (req, res)=>{
+    const userNo = req.query.userNo
     db.query("DELETE FROM membertbl WHERE userNo=?", [userNo], (err, result)=>{
          if (err) {
              throw err

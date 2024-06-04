@@ -77,7 +77,7 @@ productRouter.get("/list", (req, res)=>{
     })
 })
 
-productRouter.post("/modify", upload.single("photo"), (req, res)=>{
+productRouter.put("/modify", upload.single("photo"), (req, res)=>{
     const {prNo, category, name, price, description, inventory} = req.body
     const photo = req.file
     const query = `UPDATE producttbl 
@@ -94,7 +94,7 @@ productRouter.post("/modify", upload.single("photo"), (req, res)=>{
     })
 })
 
-productRouter.get("/remove", (req, res)=>{
+productRouter.delete("/remove", (req, res)=>{
     const prNo = req.query.prNo
     db.query("DELETE FROM producttbl WHERE prNo=?", [prNo], (err, result)=>{
         if (err) {
@@ -146,8 +146,8 @@ productRouter.get("/cartList", (req, res)=>{
    })
 })
 
-productRouter.get("/cartQtyUpdate", (req, res)=>{
-    const {cartNo, qty} = req.query
+productRouter.put("/cartQtyUpdate", (req, res)=>{
+    const {cartNo, qty} = req.body
     db.query("UPDATE cart SET qty=? WHERE cartNo=?", [qty, cartNo], (err, result)=>{
         if (err) {
             res.status(500).send("장바구니 수량 수정 실패");
@@ -158,7 +158,7 @@ productRouter.get("/cartQtyUpdate", (req, res)=>{
     })
 })
 
-productRouter.get("/cartItemRemove", (req, res)=>{
+productRouter.delete("/cartItemRemove", (req, res)=>{
     const cartNo = req.query.cartNo
     db.query("DELETE FROM cart WHERE cartNo=?", [cartNo], (err, result)=>{
         if (err) {

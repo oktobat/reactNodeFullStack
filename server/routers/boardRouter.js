@@ -47,9 +47,9 @@ boardRouter.get('/notice/list', (req, res)=>{
     })
  })
 
-boardRouter.get("/notice/hit", (req, res)=>{
-    const noNo = req.query.no
-    const hit = parseInt(req.query.hit)
+boardRouter.put("/notice/hit", (req, res)=>{
+    const noNo = req.body.noNo
+    const hit = parseInt(req.body.hit)
     db.query("UPDATE noticetbl SET hit=? WHERE noNo=?", [hit+1, noNo], (err, result)=>{
         if (err) {
             res.status(500).send("수정 실패")
@@ -59,8 +59,8 @@ boardRouter.get("/notice/hit", (req, res)=>{
     })
 })
 
-boardRouter.post("/notice/modify", (req, res)=>{
-    const {noNo, subject, content } = req.body.board
+boardRouter.put("/notice/modify", (req, res)=>{
+    const {noNo, subject, content } = req.body
     db.query("UPDATE noticetbl SET subject=?, content=? WHERE noNo=?", [subject, content, noNo], (err, result)=>{
         if (err) {
             res.status(500).send("수정 실패")
@@ -70,7 +70,7 @@ boardRouter.post("/notice/modify", (req, res)=>{
     })
 })
 
-boardRouter.get("/notice/remove", (req, res)=>{
+boardRouter.delete("/notice/remove", (req, res)=>{
     const noNo = req.query.no
     db.query("DELETE FROM noticetbl WHERE noNo=?", [noNo], (err, result)=>{
         if (err) {
@@ -185,9 +185,9 @@ boardRouter.get('/review/list', (req, res)=>{
     })
  })
 
- boardRouter.get("/review/hit", (req, res)=>{
-    const reNo = req.query.no
-    const hit = parseInt(req.query.hit)
+ boardRouter.put("/review/hit", (req, res)=>{
+    const reNo = req.body.no
+    const hit = parseInt(req.body.hit)
     db.query("UPDATE reviewtbl SET hit=? WHERE reNo=?", [hit+1, reNo], (err, result)=>{
         if (err) {
             res.status(500).send("수정 실패")
@@ -197,7 +197,7 @@ boardRouter.get('/review/list', (req, res)=>{
     })
 })
 
-boardRouter.post("/review/modify", (req, res)=>{
+boardRouter.put("/review/modify", (req, res)=>{
     let connection;
     try {
         connection = db.getConnection((err, connection)=>{
@@ -268,7 +268,7 @@ boardRouter.post("/review/modify", (req, res)=>{
 })
 
 
-boardRouter.get("/review/remove", (req, res)=>{
+boardRouter.post("/review/remove", (req, res)=>{
     let connection;
     try {
         connection = db.getConnection((err, connection)=>{
@@ -284,7 +284,7 @@ boardRouter.get("/review/remove", (req, res)=>{
                     connection.release();  // connection 자원 반납
                     return;
                 }
-                const { reNo, prNo } = req.query
+                const { reNo, prNo } = req.body
                 const reviewQuery = "DELETE FROM reviewtbl WHERE reNo=?"
                 connection.query(reviewQuery, [reNo], (err, result)=>{
                     if (err) {

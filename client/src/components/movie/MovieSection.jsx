@@ -46,7 +46,7 @@ const MovieSection = ({movies}) => {
 
     useEffect(()=>{
         if (user) {
-            axios.post('http://localhost:8001/other/movie/likeList', { userNo: user.userNo })
+            axios.get('http://localhost:8001/other/movie/likeList', {params:{ userNo: user.userNo }})
             .then(res=>{
                 if (res.data) {
                     let initialHearts = movies.map(movie => ({ movieId: movie.id, isLiked: 0 }));

@@ -46,7 +46,7 @@ const BoardModify = ({post}) => {
     const onSubmit = (e)=>{
         e.preventDefault()
         if (type=="notice") {
-           axios.post("http://localhost:8001/board/notice/modify", { noNo:post.noNo, subject:board.subject, content:board.content })
+           axios.put("http://localhost:8001/board/notice/modify", { noNo:post.noNo, subject:board.subject, content:board.content })
            .then((res)=>{
                 if (res.data.affectedRows==1) {
                     navigate("/boardList", {state : { page : currentPage}})
@@ -57,7 +57,7 @@ const BoardModify = ({post}) => {
            })
            .catch(err=>console.log(err.toJSON()))
         } else if (type=="review") {
-            axios.post("http://localhost:8001/board/review/modify", { reNo:post.reNo, content:board.content, rating:rating, prNo:post.prNo })
+            axios.put("http://localhost:8001/board/review/modify", { reNo:post.reNo, content:board.content, rating:rating, prNo:post.prNo })
            .then((res)=>{
                 if (res.data.affectedRows==1) {
                     navigate("/boardList", {state : { page : currentPage}})

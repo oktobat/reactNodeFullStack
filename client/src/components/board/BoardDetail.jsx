@@ -31,7 +31,7 @@ const BoardDetail = ({post}) => {
     const onRemove = (e)=>{
         e.preventDefault()
         if (type=="notice") {
-            axios.get(`http://localhost:8001/board/notice/remove?no=${post.noNo}`)
+            axios.delete('http://localhost:8001/board/notice/remove', {params:{no:post.noNo}})
             .then((res)=>{
                 if (res.data.affectedRows==1) {
                     navigate("/boardList", { state : {page : currentPage }})
@@ -42,7 +42,7 @@ const BoardDetail = ({post}) => {
             })
             .catch(err=>console.log(err))
         } else if (type=="review") {
-            axios.get(`http://localhost:8001/board/review/remove?reNo=${post.reNo}&prNo=${post.prNo}`)
+            axios.post(`http://localhost:8001/board/review/remove`, {reNo:post.reNo, prNo:post.prNo})
             .then((res)=>{
                 if (res.data.affectedRows==1) {
                     navigate("/boardList", { state : {page : currentPage }})
@@ -57,7 +57,7 @@ const BoardDetail = ({post}) => {
 
     useEffect(()=>{
         if (type=="notice") {
-            axios.get(`http://localhost:8001/board/notice/hit?no=${post.noNo}&hit=${post.hit}`)
+            axios.put(`http://localhost:8001/board/notice/hit`, {noNo:post.noNo, hit:post.hit})
             .then((res)=>{
                 if (res.data.affectedRows==1) {
                     console.log("증가했습니다.")
@@ -67,7 +67,7 @@ const BoardDetail = ({post}) => {
             })
             .catch(err=>console.log(err.toJSON()))
         } else if (type=="review") {
-            axios.get(`http://localhost:8001/board/review/hit?no=${post.reNo}&hit=${post.hit}`)
+            axios.put(`http://localhost:8001/board/review/hit`, {no:post.reNo, hit:post.hit})
             .then((res)=>{
                 if (res.data.affectedRows==1) {
                     console.log("증가했습니다.")
