@@ -1,0 +1,30 @@
+*** AOS (Animate On Scroll) : https://michalsnik.github.io/aos/
+1. npm i AOS
+2. import { useEffect } from 'react';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
+
+const MyComponent = () => {
+  useEffect(() => {
+    AOS.init({
+      duration: 1000,
+    });
+  }, []);
+
+  return (
+    <div>
+      <div data-aos="fade-up">Fade Up</div>
+      <div data-aos="fade-down">Fade Down</div>
+        data-aos="fade-up"                      : 애니메이션 종류
+        data-aos-offset="200"                   : 요소가 뷰포트 상단의 바닥에서 200픽셀 떨어진 위치에 도달할 때 애니메이션 시작
+        data-aos-delay="50"                     : 애니메이션 시작되기 전에 대기하는 시간
+        data-aos-duration="1000"                : 애니메이션이 완료되는데 걸리는 시간
+        data-aos-easing="ease-in-out"           : 애니메이션 속도 곡선
+        data-aos-mirror="true"                  : true이면 스크롤업 시에도 애니메이션 실행
+        data-aos-once="false"                   : false이면 스크롤할 때마다 애니메이션 반복 실행
+        data-aos-anchor-placement="top-center"  : 요소가 화면 중앙에 도달할때 애니메이션 시작됨
+    </div>
+  );
+};
+
+export default MyComponent;
