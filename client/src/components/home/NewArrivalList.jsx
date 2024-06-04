@@ -1,5 +1,7 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import styled from 'styled-components'
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 
 const NewArrivalListBlock = styled.div`
     flex: 0 0 23%;
@@ -23,10 +25,17 @@ const NewArrivalListBlock = styled.div`
     }
 `
 
-const NewArrivalList = ({item}) => {
+const NewArrivalList = ({item, delay}) => {
     const { photo, name, desc, comment, price, icon } = item
+
+    useEffect(() => {
+        AOS.init({
+          duration: 1000,
+        });
+      }, []);
+
     return (
-        <NewArrivalListBlock>
+        <NewArrivalListBlock data-aos="zoom-in" data-aos-anchor-placement="center-center" data-aos-delay={delay}>
             <div class="imgbox">
                <a href="#"><img src={photo} alt={name} /></a>
             </div>

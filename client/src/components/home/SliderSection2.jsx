@@ -1,8 +1,10 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import styled from 'styled-components'
 import Slider from 'react-slick'
 import 'slick-carousel/slick/slick.css'
 import { IoIosArrowDropleftCircle, IoIosArrowDroprightCircle } from 'react-icons/io';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 
 const SliderSection2Block = styled.div`
     margin:50px auto;
@@ -60,8 +62,15 @@ const SliderSection2 = () => {
         setCurrentImage(null);
     };
 
+    useEffect(() => {
+        AOS.init({
+          duration: 1000,
+        });
+      }, []);
+
+
     return (
-        <SliderSection2Block className="row">
+        <SliderSection2Block className="row" data-aos="fade-up" data-aos-anchor-placement="top-center">
             <Slider {...options}>
                 {
                     sliders.map((item, index)=>(

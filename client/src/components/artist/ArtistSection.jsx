@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components'
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 
 const ArtistSectionBlock = styled.div`
     h3 {
@@ -39,6 +41,7 @@ const ArtistSectionBlock = styled.div`
 const ArtistSection = () => {
 
     const [active, setActive] = useState(0)
+    const [key, setKey] = useState(0);
 
     const artistMenu = [
         {menu: '팝 (Pop)',          id:0 },
@@ -92,6 +95,16 @@ const ArtistSection = () => {
         ]
     }
 
+    useEffect(() => {
+        AOS.init({
+          duration: 1000,
+        });
+      }, []);
+
+    useEffect(() => {
+        setKey(prevKey => prevKey + 1);
+        AOS.refresh(); // 상태 변경 시 AOS를 새로고침하여 DOM 변경 사항 감지
+    }, [active]);
 
     return (
         <ArtistSectionBlock>
@@ -105,7 +118,11 @@ const ArtistSection = () => {
                 <div className="artist__member">
                     {
                         artistData[active].map((item, index)=>(
-                            <div className="member__info" key={index}>
+                            <div className="member__info" 
+                            key={`${key}-${index}`} // key에 상태 변경 반영
+                            data-aos="fade-up"
+                            data-aos-anchor-placement="top-bottom"
+                            >
                                 <a href={item.link}>
                                     <figure className="member__photo">
                                         <img src={item.artistImg} alt={item.title} />

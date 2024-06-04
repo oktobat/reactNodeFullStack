@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.2.3",
+    "aos": "^2.3.4",
     "axios": "^1.6.8",
     "classnames": "^2.5.1",
     "dayjs": "^1.11.11",
