@@ -1,2 +1,96 @@
-구글 로그인
-1. npm i @react-oauth/google
+1. 구글 로그인 인증 구현 방법
+(1) 참고블로그 - https://velog.io/@seongsimk/%EA%B5%AC%EA%B8%80-%EC%86%8C%EC%85%9C-%EB%A1%9C%EA%B7%B8%EC%9D%B8-%EA%B8%B0%EB%8A%A5-%EA%B5%AC%ED%98%84-react-oauthgoogle
+(2) 구글 검색창에서 google cloud console 검색해서 이동
+(3) (1)번 참고해서 프로젝트 생성하고 
+    client_id와 redirect_uri(승인된 리디렉션 URI)를 .env 파일로 복사
+(4) client에 npm i @react-oauth/google
+(5) main.jsx 에서
+    import { GoogleOAuthProvider } from '@react-oauth/google';
+    const googleClientId = import.meta.env.VITE_GOOGLE_AUTH_CLIENT_ID;
+    <Provider store={store}>
+      <BrowserRouter>
+        <GoogleOAuthProvider clientId={googleClientId}>
+          <App />
+        </GoogleOAuthProvider>
+      </BrowserRouter>
+    </Provider>
+(6) LoginSection.jsx 에서
+    import {  useGoogleLogin } from '@react-oauth/google';
+
+    const googleLogin = useGoogleLogin({
+        onSuccess: async tokenResponse => {
+            try {
+                    const userInfo = await axios.get('https://www.googleapis.com/oauth2/v3/userinfo', {
+                        headers: { Authorization: `Bearer ${tokenResponse.access_token}` }
+                    });
+                    console.log("구글에서 온 정보 :", userInfo)
+                    const { sub:googleId, email, name } = userInfo.data;
+
+                    여기에서 구글에서 받은 정보를 백엔드로 보내는 코드 작성    
+
+            } catch (error) {
+                console.error("Google 로그인 에러:", error);
+            }
+        },
+        onError: errorResponse => {
+            console.error("Google 로그인 에러:", errorResponse);
+        }
+     })
+
+    <div className="google">
+        <span><FaGoogle /></span>
+        <span onClick={googleLogin}>구글 로그인</span>
+    </div>
+
+(7) 백엔드에서 구글로그인 요청 처리
+    - 구글이메일로 이미 회원가입이 된 사용자는 googleId와 loginType만 update 함
+    - 구글이메일로 회원가입도 안돼 있고, 처음 구글로그인을 시도한 사용자는 
+      google에서 보내온 정보로 회원가입과 동시에 로그인이 됨
+    - 구글로그인 두번째 시도부터는 update나 insert 없이 바로 로그인이 수행됨
+
+2. 카카오로그인 인증 구현 방법
+(1) client에서 index.html 에 아래 코드 추가
+    <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
+(2) 구글에서 "카카오 개발자" 사이트로 이동
+    내 애플리케이션 -> 앱이름 클릭 -> 왼쪽 대시보드에서 "앱 키" 클릭 -> JavaScript 키 복사
+    -> .env 파일에 있는 VITE_GOOGLE_AUTH_CLIENT_ID 에 붙여넣기
+(3) 왼쪽 제품설정에서 "카카오 로그인" 클릭 -> 카카오 로그인 활성화 설정 "ON" -> OpenID Connect 활성화 설정 "ON"
+    -> Redirect URI "수정" 클릭 해서 아래 url 추가
+    -> http://localhost:5173/oauth
+       http://localhost:8001/oauth
+(4) client에서 npm i react-kakao-login 설치
+(5) LoginSection.jsx 에서
+    import  KakaoLogin  from 'react-kakao-login';
+    
+    const KakaoClientId = import.meta.env.VITE_KAKAO_AUTH_CLIENT_ID;
+
+    const onSuccess = (response)=>{
+        console.log("카카오에서 보내온 정보", response)
+        const { id, kakao_account } = response.profile
+        const { email, profile: { nickname } } = kakao_account
+
+        axios.post(`${serverUrl}/auth/kakaoLogin`, {kakaoId : id, email, name:nickname})
+        .then((res) => {
+            if (res.data) {
+                alert("카카오 계정으로 로그인되었습니다.");
+                console.log(res.data);
+                memberLogin(res.data);
+            } else {
+                alert("카카오 로그인에 실패했습니다.");
+            }
+        })
+        .catch(err => console.log(err));
+    }
+
+    <KakaoLogin 
+        token={KakaoClientId}
+        onSuccess={onSuccess}
+        onFail={console.error}
+        onLogout={console.info}
+        render={({onClick})=>(
+        <div className="kakao">
+            <span><RiKakaoTalkFill /></span>
+            <span onClick={onClick}>카카오 로그인</span>
+        </div>
+        )}
+    />

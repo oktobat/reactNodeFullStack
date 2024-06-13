@@ -38,15 +38,20 @@ CREATE TABLE IF NOT EXISTS `cart` (
 CREATE TABLE IF NOT EXISTS `membertbl` (
   `userNo` int(10) NOT NULL AUTO_INCREMENT,
   `userId` varchar(30) NOT NULL DEFAULT '0',
-  `userPw` varchar(20) NOT NULL DEFAULT '0',
+  `userPw` varchar(20) DEFAULT '0',
   `userIrum` char(10) DEFAULT NULL,
   `handphone` varchar(20) DEFAULT NULL,
   `zipCode` char(10) DEFAULT NULL,
   `addr1` varchar(50) DEFAULT NULL,
   `addr2` varchar(50) DEFAULT NULL,
-  `registerDate` date NOT NULL,
-  PRIMARY KEY (`userNo`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `registerDate` date DEFAULT NULL,
+  `googleId` varchar(255) DEFAULT NULL,
+  `kakaoId` varchar(255) DEFAULT NULL,
+  `naverId` varchar(255) DEFAULT NULL,
+  `loginType` enum('local','google','kakao','naver') NOT NULL,
+  PRIMARY KEY (`userNo`),
+  UNIQUE KEY `userId` (`userId`)
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- 내보낼 데이터가 선택되어 있지 않습니다.
 
@@ -88,9 +93,9 @@ CREATE TABLE IF NOT EXISTS `order` (
   `qty` int(11) NOT NULL DEFAULT 0,
   PRIMARY KEY (`orderNo`),
   UNIQUE KEY `orderDate_prNo` (`orderDate`,`prNo`),
-  KEY `FK_order_membertbl` (`userNo`),
   KEY `FK_order_producttbl` (`prNo`),
-  CONSTRAINT `FK_order_membertbl` FOREIGN KEY (`userNo`) REFERENCES `membertbl` (`userNo`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  KEY `FK_order_membertbl` (`userNo`),
+  CONSTRAINT `FK_order_membertbl` FOREIGN KEY (`userNo`) REFERENCES `membertbl` (`userNo`) ON DELETE CASCADE ON UPDATE NO ACTION,
   CONSTRAINT `FK_order_producttbl` FOREIGN KEY (`prNo`) REFERENCES `producttbl` (`prNo`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=94 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='주문페이지';
 

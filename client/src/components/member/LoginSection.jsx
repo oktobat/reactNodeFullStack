@@ -9,12 +9,12 @@ import axios from 'axios'
 import { userLogin } from '@/store/member';
 import { fetchCart } from '@/store/product';
 import {  useGoogleLogin } from '@react-oauth/google';
-import { KakaoLogin } from 'react-kakao-login';
+import  KakaoLogin  from 'react-kakao-login';
 // import { NaverLogin } from 'react-naver-login';
 
 const serverUrl = import.meta.env.VITE_API_URL;
 const KakaoClientId = import.meta.env.VITE_KAKAO_AUTH_CLIENT_ID;
-const KakaoAuthRedirectUri = import.meta.env.VITE_KAKAO_AUTH_REDIRECT_URI;
+// const KakaoAuthRedirectUri = import.meta.env.VITE_KAKAO_AUTH_REDIRECT_URI;
 
 const LoginSectionBlock = styled.div`
     max-width:600px; margin:50px auto; 
@@ -108,8 +108,8 @@ const LoginSection = () => {
                 const userInfo = await axios.get('https://www.googleapis.com/oauth2/v3/userinfo', {
                     headers: { Authorization: `Bearer ${tokenResponse.access_token}` }
                 });
-
-                const { sub: googleId, email, name } = userInfo.data;
+                console.log("구글에서 온 정보 :", userInfo)
+                const { sub:googleId, email, name } = userInfo.data;
 
                 axios.post(`${serverUrl}/auth/googleLogin`, { googleId, email, name })
                     .then((res) => {
@@ -117,9 +117,6 @@ const LoginSection = () => {
                             alert("구글 계정으로 로그인되었습니다.");
                             console.log(res.data)
                             memberLogin(res.data)
-                        } else if (res.data.error === 'PASSWORD_MISMATCH') {
-                            alert("이메일이 이미 존재하지만 비밀번호가 다릅니다.");
-                            // 추가 확인 또는 비밀번호 초기화 절차
                         } else {
                             alert("Google 로그인에 실패했습니다.");
                         }
@@ -134,9 +131,22 @@ const LoginSection = () => {
         },
       });
 
+    const onSuccess = (response)=>{
+        console.log("카카오에서 보내온 정보", response)
+        const { id, kakao_account } = response.profile
+        const { email, profile: { nickname } } = kakao_account
 
-    const kaoLogin = ()=>{
-        window.location.href = `https://kauth.kakao.com/oauth/authorize?client_id=${KakaoClientId}&redirect_uri=${KakaoAuthRedirectUri}&response_type=code`
+        axios.post(`${serverUrl}/auth/kakaoLogin`, {kakaoId : id, email, name:nickname})
+        .then((res) => {
+            if (res.data) {
+                alert("카카오 계정으로 로그인되었습니다.");
+                console.log(res.data);
+                memberLogin(res.data);
+            } else {
+                alert("카카오 로그인에 실패했습니다.");
+            }
+        })
+        .catch(err => console.log(err));
     }
 
     return (
@@ -167,15 +177,18 @@ const LoginSection = () => {
                     <span style={{ fontSize:'15px'}}><SiNaver /></span>
                     <span>네이버 로그인</span>
                 </div>
-                <KakaoLogin token={process.env.REACT_APP_KAKAO_AUTH_TOKEN}
-                onSuccess={onSuccess}
-                onFail={onFailure}
-                >
+                <KakaoLogin 
+                   token={KakaoClientId}
+                   onSuccess={onSuccess}
+                   onFail={console.error}
+                   onLogout={console.info}
+                   render={({onClick})=>(
                     <div className="kakao">
                         <span><RiKakaoTalkFill /></span>
-                        <span onClick={kaoLogin}>카카오 로그인</span>
+                        <span onClick={onClick}>카카오 로그인</span>
                     </div>
-                </KakaoLogin>
+                   )}
+                />
                 <div className="google">
                     <span><FaGoogle /></span>
                     <span onClick={googleLogin}>구글 로그인</span>

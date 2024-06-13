@@ -129,4 +129,60 @@ authRouter.put('/modify', (req, res)=>{
     });
 });
 
+
+authRouter.post('/kakaoLogin', (req, res) => {
+    const { kakaoId, email, name } = req.body;
+    const registerDate = dayjs();
+
+    db.query('SELECT * FROM membertbl WHERE userId = ?', [email], (err, result) => {
+        if (err) {
+            throw err;
+        } else {
+            if (result.length > 0) {
+                const existingUser = result[0];
+                if (!existingUser.kakaoId) {
+                    db.query('UPDATE membertbl SET kakaoId = ?, loginType = ? WHERE userId = ?', [kakaoId, 'kakao', email], (err, updateResult) => {
+                        if (err) {
+                            throw err;
+                        } else {
+                            // 업데이트가 성공하면 업데이트된 사용자 정보 반환
+                            db.query('SELECT * FROM membertbl WHERE userId = ?', [email], (err, updatedUser) => {
+                                if (err) {
+                                    throw err;
+                                } else {
+                                    res.send(updatedUser[0]);
+                                }
+                            });
+                        }
+                    });
+                } else {
+                    db.query('SELECT * FROM membertbl WHERE kakaoId = ?', [kakaoId], (err, updatedUser) => {
+                        if (err) {
+                            throw err;
+                        } else {
+                            res.send(updatedUser[0]);
+                        }
+                    });
+                }
+            } else {
+                // 새로운 사용자 등록
+                db.query('INSERT INTO membertbl (kakaoId, userId, userIrum, loginType, registerDate) VALUES (?, ?, ?, ?, ?)', [kakaoId, email, name, 'kakao', registerDate.format('YYYY-MM-DD')], (err, insertResult) => {
+                    if (err) {
+                        throw err;
+                    } else {
+                        // 새로운 사용자 등록 후 해당 사용자 정보 반환
+                        db.query('SELECT * FROM membertbl WHERE userId = ?', [email], (err, newUser) => {
+                            if (err) {
+                                throw err;
+                            } else {
+                                res.send(newUser[0]);
+                            }
+                        });
+                    }
+                });
+            }
+        }
+    });
+});
+
 export default authRouter;
