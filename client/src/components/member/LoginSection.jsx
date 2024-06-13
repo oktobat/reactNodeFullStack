@@ -4,10 +4,17 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { SiNaver } from "react-icons/si";
 import { RiKakaoTalkFill } from "react-icons/ri";
-import { FaGoogle, FaGithub } from "react-icons/fa";
+import { FaGoogle } from "react-icons/fa";
 import axios from 'axios'
 import { userLogin } from '@/store/member';
-import { fetchCart } from '@/store/product'
+import { fetchCart } from '@/store/product';
+import {  useGoogleLogin } from '@react-oauth/google';
+import { KakaoLogin } from 'react-kakao-login';
+// import { NaverLogin } from 'react-naver-login';
+
+const serverUrl = import.meta.env.VITE_API_URL;
+const KakaoClientId = import.meta.env.VITE_KAKAO_AUTH_CLIENT_ID;
+const KakaoAuthRedirectUri = import.meta.env.VITE_KAKAO_AUTH_REDIRECT_URI;
 
 const LoginSectionBlock = styled.div`
     max-width:600px; margin:50px auto; 
@@ -62,34 +69,74 @@ const LoginSection = () => {
             return
         }
         
-        axios.get("http://localhost:8001/auth/login", {params:{ userId, userPw }})
+        axios.get(`${serverUrl}/auth/login`, {params:{ userId, userPw }})
         .then((res)=>{
-            if (res.data[0]) {
-                console.log("회원입니다.", res.data[0])
-                dispatch(userLogin(res.data[0]))
-                dispatch(fetchCart(res.data[0].userNo))
-                if (previousUrl=='/payment') {
-                    navigate(previousUrl, {state:JSON.parse(choiceProduct)})
-                    sessionStorage.removeItem('previousUrl')
-                } else if (previousUrl=='/product' &&  previousState){
-                    const state = JSON.parse(previousState);
-                    navigate(previousUrl, {state})
-                    sessionStorage.removeItem('previousUrl')
-                    sessionStorage.removeItem('previousState')
-                } else if (previousUrl=='/cart'){
-                    navigate(previousUrl)
-                    sessionStorage.removeItem('previousUrl')
-                } else {
-                    navigate('/')                
-                }
-            } else {
-                alert("회원이 아닙니다.")
-                userIdRef.current.focus()
-                return false
-            }
+            memberLogin(res.data[0])
         })
-        .catch(err=>console.log(err.toJSON()))
-        
+        .catch(err=>console.log(err))
+    }
+
+    const memberLogin = (userData)=>{
+        if (userData) {
+            console.log("회원입니다.", userData)
+            dispatch(userLogin(userData))
+            dispatch(fetchCart(userData.userNo))
+            if (previousUrl=='/payment') {
+                navigate(previousUrl, {state:JSON.parse(choiceProduct)})
+                sessionStorage.removeItem('previousUrl')
+            } else if (previousUrl=='/product' &&  previousState){
+                const state = JSON.parse(previousState);
+                navigate(previousUrl, {state})
+                sessionStorage.removeItem('previousUrl')
+                sessionStorage.removeItem('previousState')
+            } else if (previousUrl=='/cart'){
+                navigate(previousUrl)
+                sessionStorage.removeItem('previousUrl')
+            } else {
+                navigate('/')                
+            }
+        } else {
+            alert("회원이 아닙니다.")
+            userIdRef.current.focus()
+            return false
+        }
+    }
+
+    const googleLogin = useGoogleLogin({
+        onSuccess: async tokenResponse => {
+            try {
+                const userInfo = await axios.get('https://www.googleapis.com/oauth2/v3/userinfo', {
+                    headers: { Authorization: `Bearer ${tokenResponse.access_token}` }
+                });
+
+                const { sub: googleId, email, name } = userInfo.data;
+
+                axios.post(`${serverUrl}/auth/googleLogin`, { googleId, email, name })
+                    .then((res) => {
+                        if (res.data) {
+                            alert("구글 계정으로 로그인되었습니다.");
+                            console.log(res.data)
+                            memberLogin(res.data)
+                        } else if (res.data.error === 'PASSWORD_MISMATCH') {
+                            alert("이메일이 이미 존재하지만 비밀번호가 다릅니다.");
+                            // 추가 확인 또는 비밀번호 초기화 절차
+                        } else {
+                            alert("Google 로그인에 실패했습니다.");
+                        }
+                    })
+                    .catch(err => console.log(err));
+            } catch (error) {
+                console.error("Google 로그인 에러:", error);
+            }
+        },
+        onError: errorResponse => {
+            console.error("Google 로그인 에러:", errorResponse);
+        },
+      });
+
+
+    const kaoLogin = ()=>{
+        window.location.href = `https://kauth.kakao.com/oauth/authorize?client_id=${KakaoClientId}&redirect_uri=${KakaoAuthRedirectUri}&response_type=code`
     }
 
     return (
@@ -120,17 +167,18 @@ const LoginSection = () => {
                     <span style={{ fontSize:'15px'}}><SiNaver /></span>
                     <span>네이버 로그인</span>
                 </div>
-                <div className="kakao">
-                    <span><RiKakaoTalkFill /></span>
-                    <span>카카오 로그인</span>
-                </div>
+                <KakaoLogin token={process.env.REACT_APP_KAKAO_AUTH_TOKEN}
+                onSuccess={onSuccess}
+                onFail={onFailure}
+                >
+                    <div className="kakao">
+                        <span><RiKakaoTalkFill /></span>
+                        <span onClick={kaoLogin}>카카오 로그인</span>
+                    </div>
+                </KakaoLogin>
                 <div className="google">
                     <span><FaGoogle /></span>
-                    <span>구글 로그인</span>
-                </div>
-                <div className="github">
-                    <span><FaGithub /></span>
-                    <span>깃허브 로그인</span>
+                    <span onClick={googleLogin}>구글 로그인</span>
                 </div>
             </div>
         </LoginSectionBlock>

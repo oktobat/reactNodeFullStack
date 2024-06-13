@@ -3,6 +3,8 @@ import styled from 'styled-components'
 import {Link} from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
+const serverUrl = import.meta.env.VITE_API_URL;
+
 const PaymentSectionBlock = styled.div`
     h2 { margin:20px 0 }
     table { margin-bottom:50px }
@@ -143,14 +145,14 @@ const PaymentSection = ({product, path}) => {
                 <tbody>
                     { path=='detail' ? product.map((item, index)=>(
                         <tr key={index}>
-                            <td><img src={`http://localhost:8001/uploads/${item.product.photo}`} alt={item.product.name} /> 상품명 : {item.product.name} / 수량 : {item.qty}개 / 가격 : {parseInt(item.product.price).toLocaleString()}원</td>
+                            <td><img src={`${serverUrl}/uploads/${item.product.photo}`} alt={item.product.name} /> 상품명 : {item.product.name} / 수량 : {item.qty}개 / 가격 : {parseInt(item.product.price).toLocaleString()}원</td>
                             <td style={{textAlign:"right"}}>{(parseInt(item.qty)*parseInt(item.product.price)).toLocaleString()}원</td>
                             <td style={{textAlign:"right"}}>0원</td>
                         </tr>
                     )) :
                     product.map((item, index)=>(
                         <tr key={index}>
-                            <td><img src={`http://localhost:8001/uploads/${item.photo}`} alt={item.name} /> 상품명 : {item.name} / 수량 : {item.qty}개 / 가격 : {parseInt(item.price).toLocaleString()}원</td>
+                            <td><img src={`${serverUrl}/uploads/${item.photo}`} alt={item.name} /> 상품명 : {item.name} / 수량 : {item.qty}개 / 가격 : {parseInt(item.price).toLocaleString()}원</td>
                             <td style={{textAlign:"right"}}>{(parseInt(item.qty)*parseInt(item.price)).toLocaleString()}원</td>
                             <td style={{textAlign:"right"}}>0원</td>
                         </tr>

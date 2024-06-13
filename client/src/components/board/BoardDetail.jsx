@@ -4,6 +4,8 @@ import {Link, useNavigate} from 'react-router-dom'
 import {useSelector} from 'react-redux'
 import axios from 'axios'
 
+const serverUrl = import.meta.env.VITE_API_URL;
+
 const BoardDetailBlock = styled.div`
 max-width:600px; margin:0 auto 50px; 
 table {
@@ -31,7 +33,7 @@ const BoardDetail = ({post}) => {
     const onRemove = (e)=>{
         e.preventDefault()
         if (type=="notice") {
-            axios.delete('http://localhost:8001/board/notice/remove', {params:{no:post.noNo}})
+            axios.delete(`${serverUrl}/board/notice/remove`, {params:{no:post.noNo}})
             .then((res)=>{
                 if (res.data.affectedRows==1) {
                     navigate("/boardList", { state : {page : currentPage }})
@@ -42,7 +44,7 @@ const BoardDetail = ({post}) => {
             })
             .catch(err=>console.log(err))
         } else if (type=="review") {
-            axios.post(`http://localhost:8001/board/review/remove`, {reNo:post.reNo, prNo:post.prNo})
+            axios.post(`${serverUrl}/board/review/remove`, {reNo:post.reNo, prNo:post.prNo})
             .then((res)=>{
                 if (res.data.affectedRows==1) {
                     navigate("/boardList", { state : {page : currentPage }})
@@ -57,7 +59,7 @@ const BoardDetail = ({post}) => {
 
     useEffect(()=>{
         if (type=="notice") {
-            axios.put(`http://localhost:8001/board/notice/hit`, {noNo:post.noNo, hit:post.hit})
+            axios.put(`${serverUrl}/board/notice/hit`, {noNo:post.noNo, hit:post.hit})
             .then((res)=>{
                 if (res.data.affectedRows==1) {
                     console.log("증가했습니다.")
@@ -65,9 +67,9 @@ const BoardDetail = ({post}) => {
                     console.log("증가하지 못했습니다.")
                 }
             })
-            .catch(err=>console.log(err.toJSON()))
+            .catch(err=>console.log(err))
         } else if (type=="review") {
-            axios.put(`http://localhost:8001/board/review/hit`, {no:post.reNo, hit:post.hit})
+            axios.put(`${serverUrl}/board/review/hit`, {no:post.reNo, hit:post.hit})
             .then((res)=>{
                 if (res.data.affectedRows==1) {
                     console.log("증가했습니다.")
@@ -75,7 +77,7 @@ const BoardDetail = ({post}) => {
                     console.log("증가하지 못했습니다.")
                 }
             })
-            .catch(err=>console.log(err.toJSON()))
+            .catch(err=>console.log(err))
         }
     }, [])
 
@@ -126,7 +128,7 @@ const BoardDetail = ({post}) => {
                     </tr>
                 </tbody>
             </table>
-            <div class="btn">
+            <div className="btn">
                 { (user && post.writer==user.userId) &&  
                     <>
                         <Link to={`/boardModify/${post.subject}`} state={{ post : post }}>수정</Link>

@@ -97,7 +97,7 @@ const BoardList = () => {
             </div>
             { (type=="notice" && user && user.userId == "tsalt@hanmail.net") &&
                 <div className="btn">
-                    <Link to="/boardWrite">글쓰기</Link>
+                    <Link to="/boardWrite" state={{orderItem:""}}>글쓰기</Link>
                 </div>
             }
             {/* { (type=="review" && user) &&

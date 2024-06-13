@@ -71,4 +71,62 @@ authRouter.put('/modify', (req, res)=>{
     })
  })
 
+ authRouter.post('/googleLogin', (req, res) => {
+    const { googleId, email, name } = req.body;
+    const registerDate = dayjs();
+
+    // 이미 등록된 사용자인지 확인하기 위해 데이터베이스에서 해당 이메일로 사용자 조회
+    db.query('SELECT * FROM membertbl WHERE userId = ?', [email], (err, result) => {
+        if (err) {
+            throw err;
+        } else {
+            // 이미 등록된 사용자인 경우
+            if (result.length > 0) {
+                const existingUser = result[0];
+                // 구글 ID가 이미 존재하는 경우 해당 사용자 정보를 업데이트
+                if (!existingUser.googleId) {
+                    db.query('UPDATE membertbl SET googleId = ?, loginType = ? WHERE userId = ?', [googleId, 'google', email], (err, updateResult) => {
+                        if (err) {
+                            throw err;
+                        } else {
+                            // 업데이트가 성공하면 업데이트된 사용자 정보 반환
+                            db.query('SELECT * FROM membertbl WHERE userId = ?', [email], (err, updatedUser) => {
+                                if (err) {
+                                    throw err;
+                                } else {
+                                    res.send(updatedUser[0]);
+                                }
+                            });
+                        }
+                    });
+                } else {
+                    db.query('SELECT * FROM membertbl WHERE googleId = ?', [googleId], (err, updatedUser) => {
+                        if (err) {
+                            throw err;
+                        } else {
+                            res.send(updatedUser[0]);
+                        }
+                    });
+                }
+            } else {
+                // 새로운 사용자 등록
+                db.query('INSERT INTO membertbl (googleId, userId, userIrum, loginType, registerDate) VALUES (?, ?, ?, ?, ?)', [googleId, email, name, 'google', registerDate.format('YYYY-MM-DD')], (err, insertResult) => {
+                    if (err) {
+                        throw err;
+                    } else {
+                        // 새로운 사용자 등록 후 해당 사용자 정보 반환
+                        db.query('SELECT * FROM membertbl WHERE userId = ?', [email], (err, newUser) => {
+                            if (err) {
+                                throw err;
+                            } else {
+                                res.send(newUser[0]);
+                            }
+                        });
+                    }
+                });
+            }
+        }
+    });
+});
+
 export default authRouter;

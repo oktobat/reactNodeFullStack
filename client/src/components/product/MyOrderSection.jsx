@@ -5,6 +5,8 @@ import { Link, useNavigate} from 'react-router-dom'
 import {changeType } from '@/store/board'
 import { fetchOrder } from '@/store/product'
 
+const serverUrl = import.meta.env.VITE_API_URL;
+
 const MyOrderSectionBlock = styled.div`
 h2 { margin:20px 0 }
 table { margin-bottom:50px }
@@ -60,11 +62,11 @@ const MyOrderSection = () => {
     const [userCompleteReview, setUserCompleteReview] = useState([])
 
     useEffect(() => {
-        if (user) {
+        if (user && user.userNo) {
             setUserCompleteReview(review.filter(item=>item.writer==user.userId))
             dispatch(fetchOrder(user.userNo))
         }
-    }, [dispatch, user.userNo]);
+    }, [dispatch, user && user.userNo]);
 
     const handleReviewClick = (orderItem)=>{
         dispatch(changeType("review"))
@@ -102,7 +104,7 @@ const MyOrderSection = () => {
                           }}
                         >
                           <span>
-                            <img src={`http://localhost:8001/uploads/${item.photo}`} alt={item.name} />
+                            <img src={`${serverUrl}/uploads/${item.photo}`} alt={item.name} />
                           </span>
                           <span>상품명 : {item.name} </span> /{' '}
                           <span>수량 : {item.qty}개 </span> /{' '}

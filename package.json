@@ -6,7 +6,10 @@
   "scripts": {
     "client": "cd client && npm run dev",
     "server": "cd server && npm run start",
-    "dev": "concurrently --kill-others-on-fail \"npm run client\" \"npm run server\""
+    "dev": "concurrently --kill-others-on-fail \"npm run client\" \"npm run server\"",
+    "client-build":"cd client && npm run build && cd ../",
+    "build":"npm run client-build && move ./client/dist ./server/build",
+    "start":"cd server && npm run start"
   },
   "author": "",
   "license": "ISC",

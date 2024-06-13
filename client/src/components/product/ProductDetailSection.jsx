@@ -6,6 +6,8 @@ import Modal from '@/components/product/Modal'
 import axios from 'axios'
 import {fetchProduct, fetchCart} from '@/store/product'
 
+const serverUrl = import.meta.env.VITE_API_URL;
+
 const ProductDetailSectionBlock = styled.div`
   h2 {
     text-align: center;
@@ -53,7 +55,7 @@ const ProductDetailSection = ({product, category}) => {
 
    const removeProduct = (e, pNo)=>{
       e.preventDefault()
-      axios.delete(`http://localhost:8001/product/remove`, {params:{prNo:pNo}})
+      axios.delete(`${serverUrl}/product/remove`, {params:{prNo:pNo}})
       .then(res=>{
         if (res.data.affectedRows==1) {
             console.log("삭제성공")
@@ -79,7 +81,7 @@ const ProductDetailSection = ({product, category}) => {
 
    const addToCart = async (no)=>{
     if (user) {
-        axios.post("http://localhost:8001/product/cart", {prNo:no, userNo:user.userNo, qty:qty })
+        axios.post(`${serverUrl}/product/cart`, {prNo:no, userNo:user.userNo, qty:qty })
         .then((res)=>{
             if (res.data.affectedRows!=0) {
                 console.log("장바구니 담기 성공")
@@ -104,7 +106,7 @@ const ProductDetailSection = ({product, category}) => {
             <h2>{ product.name }</h2>
             <div className="content">
                 <div className="photo">
-                    <img src={`http://localhost:8001/uploads/${product.photo}`} alt={product.name} />
+                    <img src={`${serverUrl}/uploads/${product.photo}`} alt={product.name} />
                 </div>
                 <div className="info">
                     <p>이 상품의 아이디는 { product.prNo }</p>

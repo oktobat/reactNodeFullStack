@@ -3,6 +3,8 @@ import styled from 'styled-components'
 import { useSelector } from 'react-redux'
 import axios from 'axios'
 
+const serverUrl = import.meta.env.VITE_API_URL;
+
 const MovieLikeSectionBlock = styled.ul`
     display:flex;
     flex-wrap:wrap;
@@ -17,7 +19,7 @@ const MovieLikeSection = () => {
     const [myMovieLike, setMyMovieLike] = useState(null)  
     useEffect(() => {
         if (user) {
-            axios.post('http://localhost:8001/other/movie/myMovieLike', { userNo: user.userNo })
+            axios.post(`${serverUrl}/other/movie/myMovieLike`, { userNo: user.userNo })
                 .then(res => {
                     if (res.data) {
                         console.log("좋아요리스트", res.data);
@@ -35,7 +37,7 @@ const MovieLikeSection = () => {
 
     const onRemove = (likeNo)=>{
         setMyMovieLike(myMovieLike.filter(item=>item.no!=likeNo))
-        axios.post('http://localhost:8001/other/movie/likeRemove', {no:likeNo, userNo:user.userNo})
+        axios.post(`${serverUrl}/other/movie/likeRemove`, {no:likeNo, userNo:user.userNo})
         .then(res=>{
             if (res.data) {
                 setMyMovieLike(res.data)

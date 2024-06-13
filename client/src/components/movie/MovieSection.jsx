@@ -4,6 +4,8 @@ import { FaHeart, FaRegHeart } from "react-icons/fa";
 import axios from 'axios'
 import {useSelector} from 'react-redux'
 
+const serverUrl = import.meta.env.VITE_API_URL;
+
 const MovieSectionBlock = styled.ul`
     display: flex;
     flex-wrap: wrap;
@@ -46,7 +48,7 @@ const MovieSection = ({movies}) => {
 
     useEffect(()=>{
         if (user) {
-            axios.get('http://localhost:8001/other/movie/likeList', {params:{ userNo: user.userNo }})
+            axios.get(`${serverUrl}/other/movie/likeList`, {params:{ userNo: user.userNo }})
             .then(res=>{
                 if (res.data) {
                     let initialHearts = movies.map(movie => ({ movieId: movie.id, isLiked: 0 }));
@@ -72,7 +74,7 @@ const MovieSection = ({movies}) => {
            console.log("하트들", hearts)
            const updatedHearts =  hearts.map((heart)=> heart.movieId==movieItem.id ? {...heart, isLiked:!heart.isLiked } : heart );
            setHearts(updatedHearts)
-           axios.post('http://localhost:8001/other/movie/likeToggle', { movie: movieItem, userNo: user.userNo })
+           axios.post(`${serverUrl}/other/movie/likeToggle`, { movie: movieItem, userNo: user.userNo })
            .then(res => {
                 if (res.data) {
                     console.log("좋아요 리스트 업데이트", res.data);

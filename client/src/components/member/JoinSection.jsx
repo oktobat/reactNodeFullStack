@@ -3,6 +3,8 @@ import styled from 'styled-components'
 import {useNavigate} from 'react-router-dom'
 import axios from 'axios'
 
+const serverUrl = import.meta.env.VITE_API_URL;
+
 const JoinSectionBlock = styled.div`
     max-width:600px; margin:50px auto; 
     table { 
@@ -68,14 +70,14 @@ const JoinSection = () => {
             return
         }
 
-        if ( message=="중복된 아이디입니다." ) {
-            alert("중복된 아이디입니다.")
+        if ( message=="중복된 이메일입니다." ) {
+            alert("중복된 이메일입니다.")
             return
         }
 
         const addMember = {userId:userInfo.userId, userPw:userInfo.userPw, userIrum:userInfo.userIrum, handphone:userInfo.handphone, zipCode:userInfo.zipCode, addr1:userInfo.addr1, addr2:userInfo.addr2}
         axios
-        .post('http://localhost:8001/auth/join', { addMember } )
+        .post(`${serverUrl}/auth/join`, { addMember } )
         .then((res)=>{
             console.log("회원가입중", res)
             if (res.data.affectedRows === 1) {
@@ -86,20 +88,20 @@ const JoinSection = () => {
             }
             navigate("/login")
         })
-        .catch(err=>console.log(err.toJSON()))
+        .catch(err=>console.log(err))
     }
     
     const idCheck = (value)=>{
-        axios.get("http://localhost:8001/auth/idcheck", {params:{userId:value}})
+        axios.get(`${serverUrl}/auth/idcheck`, {params:{userId:value}})
         .then((res)=>{
             console.log(res)   
             if (res.data[0]) {
-                setMessage("중복된 아이디입니다.")
+                setMessage("중복된 이메일입니다.")
             } else {
-                setMessage("가능한 아이디입니다.")
+                setMessage("가능한 이메일입니다.")
             }
         })
-        .catch(err=>console.log(err.toJSON()))
+        .catch(err=>console.log(err))
     }
 
     
@@ -145,7 +147,7 @@ const JoinSection = () => {
                     </colgroup>
                     <tbody>
                         <tr>
-                            <td>아이디 중복체크 :</td>
+                            <td>이메일 중복체크 :</td>
                             <td> { message } </td>
                         </tr>
                         <tr>

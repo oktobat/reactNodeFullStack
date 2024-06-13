@@ -4,6 +4,8 @@ import { useDispatch, useSelector} from 'react-redux'
 import axios from 'axios'
 import { fetchCart, fetchOrder } from '@/store/product'
 
+const serverUrl = import.meta.env.VITE_API_URL;
+
 const PaymentFinishSection = ({product, path}) => {
     console.log("구매구매상품", product)
     const [orderProduct, setOrderProduct] = useState(null)
@@ -20,7 +22,7 @@ const PaymentFinishSection = ({product, path}) => {
 
     useEffect(() => {
         if (orderProduct !== null) {
-            axios.post("http://localhost:8001/product/order", { orderProduct })
+            axios.post(`${serverUrl}/product/order`, { orderProduct })
                 .then(res => {
                     console.log("꼭찍", res);
                     if (res.data=="성공") {

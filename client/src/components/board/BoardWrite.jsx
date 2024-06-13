@@ -4,6 +4,8 @@ import {Link, useNavigate} from 'react-router-dom'
 import {useSelector} from 'react-redux'
 import axios from 'axios'
 
+const serverUrl = import.meta.env.VITE_API_URL;
+
 const BoardWriteBlock = styled.div`
 max-width:600px; margin:0 auto 50px; 
 table {
@@ -47,7 +49,7 @@ const BoardWrite = ({ type, orderItem }) => {
     const onSubmit = (e)=>{
         e.preventDefault()
         if (type=="notice") {
-            axios.post("http://localhost:8001/board/notice/write", { board:board })
+            axios.post(`${serverUrl}/board/notice/write`, { board:board })
             .then((res)=>{
                 if (res.data.affectedRows==1) {
                     navigate("/boardList", {state:{page:1}})
@@ -55,9 +57,9 @@ const BoardWrite = ({ type, orderItem }) => {
                     alert("글이 등록되지 않았습니다.")
                 }
             })
-            .catch(err=>console.log(err.toJSON()))
+            .catch(err=>console.log(err))
         } else if (type=="review") {
-            axios.post("http://localhost:8001/board/review/write", { subject:orderItem.name, content:board.content, rating, prNo:orderItem.prNo, writer:user.userId, orderNo:orderItem.orderNo })
+            axios.post(`${serverUrl}/board/review/write`, { subject:orderItem.name, content:board.content, rating, prNo:orderItem.prNo, writer:user.userId, orderNo:orderItem.orderNo })
             .then((res)=>{
                 if (res.data.affectedRows==1) {
                     navigate("/boardList", {state:{page:1}})
@@ -65,7 +67,7 @@ const BoardWrite = ({ type, orderItem }) => {
                     alert("글이 등록되지 않았습니다.")
                 }
             })
-            .catch(err=>console.log(err.toJSON()))
+            .catch(err=>console.log(err))
         }
     }
 
@@ -118,7 +120,7 @@ const BoardWrite = ({ type, orderItem }) => {
                         </tr>
                     </tbody>
                 </table>
-                <div class="btn">
+                <div className="btn">
                     <button type="submit">작성</button>
                     <Link to="/boardList" state={{ page:1}}>목록</Link>
                 </div>

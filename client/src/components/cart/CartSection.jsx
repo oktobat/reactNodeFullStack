@@ -5,6 +5,8 @@ import {useNavigate} from 'react-router-dom'
 import axios from 'axios'
 import {fetchCart} from '@/store/product'
 
+const serverUrl = import.meta.env.VITE_API_URL;
+
 const TableBlock = styled.table`
 col:nth-child(1) { width: 50px; }
 col:nth-child(2) { width: 100px; }
@@ -76,7 +78,7 @@ const CartSection = () => {
             [cNo]: newQty
         }));
         if (user) {
-            axios.put(`http://localhost:8001/product/cartQtyUpdate`, {cartNo:cNo, qty:newQty})
+            axios.put(`${serverUrl}/product/cartQtyUpdate`, {cartNo:cNo, qty:newQty})
             .then((res) => {
                 if (res.data.affectedRows==1) {
                     console.log("장바구니 수량 업데이트 성공")
@@ -93,7 +95,7 @@ const CartSection = () => {
 
     const removeCartItem = (cNo)=>{
         if (user) {
-            axios.delete(`http://localhost:8001/product/cartItemRemove`, {params:{cartNo:cNo}})
+            axios.delete(`${serverUrl}/product/cartItemRemove`, {params:{cartNo:cNo}})
             .then((res) => {
                 if (res.data.affectedRows==1) {
                     console.log("장바구니 아이템 삭제 성공")
@@ -179,7 +181,7 @@ const CartSection = () => {
                                 <tr key={index}>
                                     <td style={{textAlign:'center'}}><input type="checkbox" name="choice" onClick={()=>handleToggle(item.prNo)} /></td>
                                     <td>
-                                        <img src={`http://localhost:8001/uploads/${item.photo}`} alt={item.name} />
+                                        <img src={`${serverUrl}/uploads/${item.photo}`} alt={item.name} />
                                     </td>
                                     <td>
                                         { item.name } ({parseInt(item.price).toLocaleString()})

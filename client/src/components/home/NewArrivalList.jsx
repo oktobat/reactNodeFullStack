@@ -36,10 +36,10 @@ const NewArrivalList = ({item, delay}) => {
 
     return (
         <NewArrivalListBlock data-aos="zoom-in" data-aos-anchor-placement="center-center" data-aos-delay={delay}>
-            <div class="imgbox">
+            <div className="imgbox">
                <a href="#"><img src={photo} alt={name} /></a>
             </div>
-            <div class="info">
+            <div className="info">
                 <div>
                     <p><a href="#">{ name }</a></p>
                     <p>{ desc }</p>

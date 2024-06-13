@@ -1,6 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 import axios from 'axios'
 
+const serverUrl = import.meta.env.VITE_API_URL;
+
 const boardSlice = createSlice({
     name:"boards",
     initialState : {
@@ -42,7 +44,7 @@ const boardSlice = createSlice({
 export const { initNotice, initReview, changeType, setPage } = boardSlice.actions;
 
 export const fetchNotice = (page) => (dispatch) =>{
-    axios.get(`http://localhost:8001/board/notice/list?page=${page}`)
+    axios.get(`${serverUrl}/board/notice/list?page=${page}`)
     .then((res)=>{
         console.log("공지글", res)
         const { totalCount, data} = res.data;
@@ -52,7 +54,7 @@ export const fetchNotice = (page) => (dispatch) =>{
 }
 
 export const fetchReview = (page) => (dispatch) =>{
-    axios.get(`http://localhost:8001/board/review/list?page=${page}`)
+    axios.get(`${serverUrl}/board/review/list?page=${page}`)
     .then((res)=>{
         console.log("공지글", res)
         const { totalCount, data} = res.data;

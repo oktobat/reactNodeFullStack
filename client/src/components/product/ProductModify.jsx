@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { useSelector} from 'react-redux'
 
+const serverUrl = import.meta.env.VITE_API_URL;
+
 const ProductModifyBlock = styled.div`
 max-width:500px; margin:0 auto;
 div {
@@ -67,7 +69,7 @@ const ProductModify = ({item, title}) => {
             formData.append("photo", product.photo)
         }
 
-        axios.put("http://localhost:8001/product/modify", formData, {
+        axios.put(`${serverUrl}/product/modify`, formData, {
             headers : {
                 "Content-Type": "multipart/form-data",
             }

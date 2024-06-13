@@ -7,6 +7,8 @@ import { Link, useNavigate } from 'react-router-dom'
 import { setPage, fetchProduct, fetchCart } from '@/store/product'
 import axios from 'axios'
 
+const serverUrl = import.meta.env.VITE_API_URL;
+
 const ProductSectionBlock = styled.div``
 
 const UlBlock = styled.ul`
@@ -101,7 +103,7 @@ const ProductSection = ({title}) => {
 
     const addToCart = async (no)=>{
         if (user) {
-            axios.post("http://localhost:8001/product/cart", {prNo:no, userNo:user.userNo, qty:1 })
+            axios.post(`${serverUrl}/product/cart`, {prNo:no, userNo:user.userNo, qty:1 })
             .then((res)=>{
                 if (res.data.affectedRows!=0) {
                     console.log("장바구니 담기 성공")
@@ -187,7 +189,7 @@ const ProductSection = ({title}) => {
                 products.map((item, index)=>(
                     <ListBlock key={index}>
                         <div className="photo">
-                            <Link to={`/product/${item.prNo}`} state={{ item:item, title:title }}><img src={`http://localhost:8001/uploads/${item.photo}`} alt={item.name} /></Link>
+                            <Link to={`/product/${item.prNo}`} state={{ item:item, title:title }}><img src={`${serverUrl}/uploads/${item.photo}`} alt={item.name} /></Link>
                         </div>
                         <div className="info">
                             <p><a href="#">{item.name}</a></p>

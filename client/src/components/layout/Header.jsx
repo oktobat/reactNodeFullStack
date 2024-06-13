@@ -14,6 +14,8 @@ import { useMediaQuery } from 'react-responsive'
 import axios from 'axios'
 import { FaRegHeart } from "react-icons/fa";
 
+const serverUrl = import.meta.env.VITE_API_URL;
+
 const HeaderBlock = styled.div`
   text-align: center;
   padding: 20px;
@@ -143,7 +145,7 @@ const Header = () => {
     useEffect(()=>{
       if (localStorage.getItem('loging')) {
         const {userNo} = JSON.parse(localStorage.getItem('loging'))
-        axios.get("http://localhost:8001/auth/refresh", {params:{userNo}})
+        axios.get(`${serverUrl}/auth/refresh`, {params:{userNo}})
         .then((res)=>{
            dispatch(localUser(res.data[0]))
            dispatch(fetchCart(user?.userNo))

@@ -6,6 +6,9 @@ import { BrowserRouter } from 'react-router-dom'
 import App from './App.jsx'
 import '@/assets/css/reset.css'
 import { fetchNotice } from '@/store/board';
+import { GoogleOAuthProvider } from '@react-oauth/google';
+
+const googleClientId = import.meta.env.VITE_GOOGLE_AUTH_CLIENT_ID;
 
 // 어플리케이션이 실행될 때 초기 데이터를 가져옴
 store.dispatch(fetchNotice(1));
@@ -16,7 +19,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   // <React.StrictMode>
     <Provider store={store}>
       <BrowserRouter>
-        <App />
+        <GoogleOAuthProvider clientId={googleClientId}>
+          <App />
+        </GoogleOAuthProvider>
       </BrowserRouter>
     </Provider>
   // </React.StrictMode>,

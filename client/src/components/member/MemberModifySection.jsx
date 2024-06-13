@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom'
 import { localUser, userLogout } from '@/store/member'
 import axios from 'axios'
 
+const serverUrl = import.meta.env.VITE_API_URL;
+
 const MemberModifySectionBlock = styled.div`
     max-width:600px; margin:50px auto; 
     table { 
@@ -69,7 +71,7 @@ const MemberModifySection = () => {
             return
         }
         
-        axios.put("http://localhost:8001/auth/modify", { userInfo:userInfo })
+        axios.put(`${serverUrl}/auth/modify`, { userInfo:userInfo })
         .then((res)=>{
             if (res.data.affectedRows==1) {
                 alert("정보가 수정되었습니다.")
@@ -87,7 +89,7 @@ const MemberModifySection = () => {
         e.preventDefault()
         const answer = confirm("정말로 탈퇴하시겠습니까?")
         if (answer) {
-            axios.delete("http://localhost:8001/auth/remove", {params: { userNo : userInfo.userNo }})
+            axios.delete(`${serverUrl}/auth/remove`, {params: { userNo : userInfo.userNo }})
             .then((res)=>{
                 console.log("탈퇴성공", res)
                 if (res.data.affectedRows==1) {

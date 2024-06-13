@@ -2,6 +2,8 @@ import React, {useState} from 'react';
 import styled from 'styled-components'
 import axios from 'axios'
 
+const serverUrl = import.meta.env.VITE_API_URL;
+
 const ProductInsertSectionBlock = styled.div`
     max-width:500px; margin:0 auto;
     div {
@@ -59,7 +61,7 @@ const ProductInsertSection = () => {
         if (product.photo) {
             formData.append("photo", product.photo)
         }
-        axios.post("http://localhost:8001/product/register", formData, {
+        axios.post(`${serverUrl}/product/register`, formData, {
             headers : {
                 "Content-Type": "multipart/form-data",
             }

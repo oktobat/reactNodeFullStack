@@ -4,6 +4,8 @@ import {Link, useNavigate} from 'react-router-dom'
 import {useSelector} from 'react-redux'
 import axios from 'axios'
 
+const serverUrl = import.meta.env.VITE_API_URL;
+
 const BoardModifyBlock = styled.div`
 max-width:600px; margin:0 auto 50px; 
 table {
@@ -46,7 +48,7 @@ const BoardModify = ({post}) => {
     const onSubmit = (e)=>{
         e.preventDefault()
         if (type=="notice") {
-           axios.put("http://localhost:8001/board/notice/modify", { noNo:post.noNo, subject:board.subject, content:board.content })
+           axios.put(`${serverUrl}/board/notice/modify`, { noNo:post.noNo, subject:board.subject, content:board.content })
            .then((res)=>{
                 if (res.data.affectedRows==1) {
                     navigate("/boardList", {state : { page : currentPage}})
@@ -55,9 +57,9 @@ const BoardModify = ({post}) => {
                     return
                 }
            })
-           .catch(err=>console.log(err.toJSON()))
+           .catch(err=>console.log(err))
         } else if (type=="review") {
-            axios.put("http://localhost:8001/board/review/modify", { reNo:post.reNo, content:board.content, rating:rating, prNo:post.prNo })
+            axios.put(`${serverUrl}/board/review/modify`, { reNo:post.reNo, content:board.content, rating:rating, prNo:post.prNo })
            .then((res)=>{
                 if (res.data.affectedRows==1) {
                     navigate("/boardList", {state : { page : currentPage}})
@@ -66,7 +68,7 @@ const BoardModify = ({post}) => {
                     return
                 }
            })
-           .catch(err=>console.log(err.toJSON()))
+           .catch(err=>console.log(err))
         }
     }
 
@@ -119,7 +121,7 @@ const BoardModify = ({post}) => {
                         </tr>
                     </tbody>
                 </table>
-                <div class="btn">
+                <div className="btn">
                     <button type="submit">글수정</button>
                     <Link to="/boardList">목록</Link>
                 </div>
