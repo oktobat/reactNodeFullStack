@@ -10,11 +10,11 @@ import { userLogin } from '@/store/member';
 import { fetchCart } from '@/store/product';
 import {  useGoogleLogin } from '@react-oauth/google';
 import  KakaoLogin  from 'react-kakao-login';
-// import { NaverLogin } from 'react-naver-login';
 
 const serverUrl = import.meta.env.VITE_API_URL;
 const KakaoClientId = import.meta.env.VITE_KAKAO_AUTH_CLIENT_ID;
 // const KakaoAuthRedirectUri = import.meta.env.VITE_KAKAO_AUTH_REDIRECT_URI;
+
 
 const LoginSectionBlock = styled.div`
     max-width:600px; margin:50px auto; 
@@ -131,7 +131,7 @@ const LoginSection = () => {
         },
       });
 
-    const onSuccess = (response)=>{
+    const onKakaoLogin = (response)=>{
         console.log("카카오에서 보내온 정보", response)
         const { id, kakao_account } = response.profile
         const { email, profile: { nickname } } = kakao_account
@@ -149,6 +149,31 @@ const LoginSection = () => {
         .catch(err => console.log(err));
     }
 
+    const naverClientId = import.meta.env.VITE_NAVER_AUTH_CLIENT_ID;
+    const naverAuthRedirectUri = import.meta.env.VITE_NAVER_AUTH_REDIRECT_URI;
+   
+    useEffect(() => {
+        initNaverLogin();
+        }, []);
+      
+    const initNaverLogin = () => {
+        const naverLogin = new window.naver.LoginWithNaverId({
+            clientId: naverClientId,
+            callbackUrl: naverAuthRedirectUri,
+            isPopup: true,
+            loginButton: { color: "green", type: 3, height: 60 },
+            callbackHandle: true,
+        });
+        naverLogin.init();
+    };
+      
+    const handleNaverClick = () => {
+        const naverLoginButton = document.getElementById(
+          "naverIdLogin_loginButton"
+        );
+        if (naverLoginButton) naverLoginButton.click();
+    };
+ 
     return (
         <LoginSectionBlock>
             <form onSubmit={handleLogin}>
@@ -173,13 +198,14 @@ const LoginSection = () => {
                 </div>
             </form>
             <div className="snslogin">
+                <div id="naverIdLogin" style={{ display:'none'}} />
                 <div className="naver">
                     <span style={{ fontSize:'15px'}}><SiNaver /></span>
-                    <span>네이버 로그인</span>
+                    <span onClick={handleNaverClick}>네이버 로그인</span> 
                 </div>
                 <KakaoLogin 
                    token={KakaoClientId}
-                   onSuccess={onSuccess}
+                   onSuccess={onKakaoLogin}
                    onFail={console.error}
                    onLogout={console.info}
                    render={({onClick})=>(

@@ -1,7 +1,7 @@
 1. 구글 로그인 인증 구현 방법
 (1) 참고블로그 - https://velog.io/@seongsimk/%EA%B5%AC%EA%B8%80-%EC%86%8C%EC%85%9C-%EB%A1%9C%EA%B7%B8%EC%9D%B8-%EA%B8%B0%EB%8A%A5-%EA%B5%AC%ED%98%84-react-oauthgoogle
 (2) 구글 검색창에서 google cloud console 검색해서 이동
-(3) (1)번 참고해서 프로젝트 생성하고 
+(3) "API 및 서비스" 클릭 : (1)번 참고해서 프로젝트 생성하고 
     client_id와 redirect_uri(승인된 리디렉션 URI)를 .env 파일로 복사
 (4) client에 npm i @react-oauth/google
 (5) main.jsx 에서
@@ -48,7 +48,7 @@
       google에서 보내온 정보로 회원가입과 동시에 로그인이 됨
     - 구글로그인 두번째 시도부터는 update나 insert 없이 바로 로그인이 수행됨
 
-2. 카카오로그인 인증 구현 방법
+2. 카카오로그인 인증 구현 방법 : (참고) https://stack94.tistory.com/entry/React-%EC%B9%B4%EC%B9%B4%EC%98%A4Kakao-%EB%A1%9C%EA%B7%B8%EC%9D%B8-%EA%B5%AC%ED%98%84%ED%95%B4%EB%B3%B4%EA%B8%B0
 (1) client에서 index.html 에 아래 코드 추가
     <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
 (2) 구글에서 "카카오 개발자" 사이트로 이동
@@ -94,3 +94,153 @@
         </div>
         )}
     />
+
+3. 네이버 아이디 로그인 기능 
+(1) 참고 블로그(네이버 셋팅) : https://velog.io/@rxxdo/%EB%84%A4%EC%9D%B4%EB%B2%84-%EC%86%8C%EC%85%9C-%EB%A1%9C%EA%B7%B8%EC%9D%B8-%EC%A0%81%EC%9A%A9%ED%95%98%EA%B8%B0-1%EB%B6%80
+(2) 구글 검색창에서 "네이버 개발자 센터" 로 이동하여 위의 블로그 내용대로 수행하면 Client_ID와 RedirectURI를 얻을 수 있음
+(3) .env 파일에 
+    VITE_NAVER_AUTH_CLIENT_ID=본인의 Client_ID 붙여넣기
+    VITE_NAVER_AUTH_REDIRECT_URI=http://localhost:5173/oauth
+(4) 참고 블로그(react 코딩) : https://choijying21.tistory.com/140
+                             https://velog.io/@kados22/react-%EB%84%A4%EC%9D%B4%EB%B2%84-%EB%A1%9C%EA%B7%B8%EC%9D%B8-%EA%B5%AC%ED%98%84-%EC%BB%A4%EC%8A%A4%ED%85%80
+    index.hmtl 에 아래 cdn 코드 추가
+    <script type="text/javascript" src="https://static.nid.naver.com/js/naveridlogin_js_sdk_2.0.0.js"charset="utf-8"></script>
+(5) LoginSection.jsx 에서
+    const naverClientId = import.meta.env.VITE_NAVER_AUTH_CLIENT_ID;
+    const naverAuthRedirectUri = import.meta.env.VITE_NAVER_AUTH_REDIRECT_URI;
+    useEffect(() => {
+        initNaverLogin();
+    }, []);
+      
+    const initNaverLogin = () => {
+        const naverLogin = new window.naver.LoginWithNaverId({
+            clientId: naverClientId,
+            callbackUrl: naverAuthRedirectUri,
+            isPopup: true,
+            loginButton: { color: "green", type: 3, height: 60 },
+            callbackHandle: true,
+        });
+        naverLogin.init();
+    };
+      
+    const handleNaverClick = () => {
+        const naverLoginButton = document.getElementById(
+          "naverIdLogin_loginButton"
+        );
+        if (naverLoginButton) naverLoginButton.click();
+    };
+
+    *** 기존의 로그인 버튼 코드 찾아서 아래처럼 수정
+    <div id="naverIdLogin" style={{ display:'none'}} />
+    <div className="naver">
+        <span style={{ fontSize:'15px'}}><SiNaver /></span>
+        <span onClick={handleNaverClick}>네이버 로그인</span> 
+    </div>
+(4) NaverLogin.jsx 컴포넌트 만들기
+import React, { useEffect } from "react";
+import styled from "styled-components";
+import { ImSpinner } from "react-icons/im";
+import axios from 'axios'
+import { useDispatch } from 'react-redux';
+import { userLogin } from '@/store/member';
+import { fetchCart } from '@/store/product';
+
+const Wrap = styled.div``;
+
+const LoadingBlock = styled.div`
+    height:100vh;
+    display:flex; justify-content:center; align-items:center;
+    .loadIcon {
+        font-size : 80px; 
+        animation : loadSpin 5s linear infinite;
+    }
+    @keyframes loadSpin {
+        0% { transform : rotate(0deg) }
+        100% { transform : rotate(3turn) }
+    }
+`
+
+const NaverLogin = () => {
+  const dispatch = useDispatch()
+  const { naver } = window;
+
+  const serverUrl = import.meta.env.VITE_API_URL;
+  const naverClientId = import.meta.env.VITE_NAVER_AUTH_CLIENT_ID;
+  const naverAuthRedirectUri = import.meta.env.VITE_NAVER_AUTH_REDIRECT_URI;
+
+  const initializeNaverLogin = () => {
+    const naverLogin = new naver.LoginWithNaverId({
+      clientId: naverClientId,
+      callbackUrl: naverAuthRedirectUri,
+      isPopup: false,
+      callbackHandle: true,
+    });
+    naverLogin.init();
+
+    naverLogin.getLoginStatus(function (status) {
+      if (status) {
+        const naverId = naverLogin.user.getId(); 
+        const email = naverLogin.user.getEmail();
+        const name = naverLogin.user.getName();
+        console.log("네이버 사용자 ID:", naverId);
+        console.log("이메일:", email);
+        console.log("이름:", name);
+        if (!email && !name) {
+          alert("이메일과 사용자명은 필수정보입니다. 정보제공을 동의해주세요.");
+          naverLogin.reprompt();
+          return;
+        }
+        // 백엔드로 네이버 계정으로 로그인한 회원의 정보를 전송
+        axios.post(`${serverUrl}/auth/naverLogin`, {naverId, email, name})
+        .then((res)=>{
+            if (res.data) {
+              alert("네이버 계정으로 로그인되었습니다.");
+              console.log("회원입니다.", res.data)
+              dispatch(userLogin(res.data))
+              dispatch(fetchCart(res.data.userNo))
+              window.opener.location.href = "/"
+              window.close() 
+            } else {
+              alert("네이버 로그인에 실패했습니다.");
+            }
+        })
+      } else {
+        console.log("로그인 실패");
+      }
+    });
+  };
+
+  useEffect(() => {
+    initializeNaverLogin();
+  }, []);
+
+    return (
+        <Wrap>
+            <div className="container">
+                <LoadingBlock>
+                    <ImSpinner className="loadIcon" />
+                </LoadingBlock>
+            </div>
+        </Wrap>
+    );
+  };
+  
+  export default NaverLogin;
+
+(5) App.jsx 에서 아래 코드 추가
+    import NaverLogin from '@/components/member/NaverLogin'
+    <Route path="/oauth" element={ <NaverLogin /> } />
+(6) Layout.jsx 에서 아래 코드 추가
+    import {useLocation} from 'react-router-dom'
+    const location = useLocation()
+
+    기존 return 문 위에 아래 코드 추가
+    if (location.pathname === '/oauth') {
+        return (
+            <Wrap>
+                <div className="container">
+                    <Outlet />
+                </div>
+            </Wrap>
+        );
+    }

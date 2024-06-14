@@ -22,6 +22,7 @@ import PaymentView from '@/views/PaymentView'
 import PaymentFinishView from '@/views/PaymentFinishView'
 import MyOrderView from '@/views/MyOrderView'
 import MovieLikeView from '@/views/MovieLikeView'
+import NaverLogin from '@/components/member/NaverLogin'
 
 const App = () => {
   return (
@@ -48,6 +49,7 @@ const App = () => {
         <Route path="/payment" element={ <PaymentView /> } />
         <Route path="/paymentFinish" element={ <PaymentFinishView /> } />
         <Route path="/myOrder" element={ <MyOrderView /> } />
+        <Route path="/oauth" element={ <NaverLogin /> } />
       </Route>
     </Routes>
   );

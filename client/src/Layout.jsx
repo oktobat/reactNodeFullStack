@@ -5,6 +5,7 @@ import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import {useDispatch} from 'react-redux'
 import { ImSpinner } from "react-icons/im";
+import {useLocation} from 'react-router-dom'
 
 const Wrap = styled.div`
     // div.cover {
@@ -34,6 +35,7 @@ const LoadingBlock = styled.div`
 
 const Layout = () => {
     const dispatch = useDispatch()
+    const location = useLocation()
 
     const [loading, setLoading] = useState(false)
 
@@ -53,6 +55,18 @@ const Layout = () => {
            </Wrap>
         );
     } 
+
+    if (location.pathname === '/oauth') {
+        return (
+            <Wrap>
+                <div className="container">
+                    <Outlet />
+                </div>
+            </Wrap>
+        );
+    }
+
+
     return (
         <Wrap>
             {/* <div className="cover">이 사이트는 768px 이하 화면에서만 보입니다.</div> */}
