@@ -1,26 +1,48 @@
 import express from 'express'   // 웹서버 생성을 위해 express 관련 파일을 가져옴
-
-const app = express()
-const PORT = 8001
-
+import { createServer } from 'http';
+import { Server } from 'socket.io';
 import path from 'path'            
-import cors from 'cors'            
-// const corsOptions = {
-//      origin: 'http://localhost:5173', 
-//      credentials:true
-// } 
-app.use(cors()) 
-// app.use((req, res, next) => {
-//     res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
-//     next();
-//   });
-
-app.use(express.json())           // 사용자의 json 요청을 처리하여 req.body 객체에 저장해줌
-
+import cors from 'cors'  
 import authRouter from './routers/authRouter.js'
 import boardRouter from './routers/boardRouter.js'
 import productRouter from './routers/productRouter.js'
 import otherRouter from './routers/otherRouter.js'
+
+const app = express()
+const PORT = 8001
+          
+// CORS 설정
+app.use(cors({
+    origin: 'http://localhost:5173',
+    methods: ['GET', 'POST']
+}));
+  
+app.use(express.json())           // 사용자의 json 요청을 처리하여 req.body 객체에 저장해줌
+
+const server = createServer(app); 
+const wsServer = new Server(server, {
+    cors: {
+      origin: 'http://localhost:5173',
+      methods: ['GET', 'POST']
+    }
+  });
+
+// WebSocket 연결관리
+wsServer.on('connection', (socket)=>{
+    console.log('a user connected');
+
+    // 클라이언트로부터 메시지 수신
+    socket.on("Message", (msg)=>{
+        console.log('message: ' + msg.message);
+        // 모든 클라이언트에게 메시지 브로드캐스팅
+        wsServer.emit('Message', msg);
+    })
+
+    socket.on('disconnect', () => {
+        console.log('user disconnected');
+    });
+
+})  
 
 // 리소스 파일들을 관리하는 경로 지정하기
 const __dirname = path.resolve()
@@ -34,4 +56,4 @@ app.use('/other', otherRouter)
 
 
 // 지정한 포트에서 서버를 실행함
-app.listen(PORT, ()=>console.log(`Listening on port ${PORT}`))
+server.listen(PORT, ()=>console.log(`Listening on port ${PORT}`))

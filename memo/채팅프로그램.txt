@@ -1,0 +1,36 @@
+0. WebSocket(웹소캣) : https://velog.io/@codingbotpark/Web-Socket-%EC%9D%B4%EB%9E%80
+1. 라이브러리 설치 
+   server 폴더 : npm i socket.io,   npm i http
+   client 폴더 : npm i socket.io-client
+2. web.js에서
+   import { createServer } from 'http';
+   import { Server } from 'socket.io';
+
+   const server = createServer(app); 
+   const wsServer = new Server(server, {
+        cors: {
+        origin: 'http://localhost:5173',
+        methods: ['GET', 'POST']
+        }
+   });
+
+   // WebSocket 연결관리
+   wsServer.on('connection', (socket)=>{
+        console.log('a user connected');
+
+        // 클라이언트로부터 메시지 수신
+        socket.on("Message", (msg)=>{
+            console.log('message: ' + msg.message);
+            // 모든 클라이언트에게 메시지 브로드캐스팅
+            wsServer.emit('Message', msg);
+        })
+
+        socket.on('disconnect', () => {
+            console.log('user disconnected');
+        });
+    })  
+
+    // 맨 마지막줄에 app만 server로 수정함
+    server.listen(PORT, ()=>console.log(`Listening on port ${PORT}`))
+
+3. Chat.jsx에서 채팅창 만들기
