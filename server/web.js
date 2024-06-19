@@ -29,7 +29,7 @@ const wsServer = new Server(server, {
 
 // WebSocket 연결관리
 wsServer.on('connection', (socket)=>{
-    console.log('a user connected');
+    console.log('a user connected', socket.id);
 
     // 클라이언트로부터 메시지 수신
     socket.on("Message", (msg)=>{
