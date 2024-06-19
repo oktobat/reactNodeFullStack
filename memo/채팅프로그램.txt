@@ -17,6 +17,8 @@
    // WebSocket 연결관리
    wsServer.on('connection', (socket)=>{
         console.log('a user connected');
+        console.log(socket.id);
+        // socket.id : 클라이언트가 서버에 연결될때마다 서버에 의해 생성되는 고유 id
 
         // 클라이언트로부터 메시지 수신
         socket.on("Message", (msg)=>{
@@ -34,3 +36,12 @@
     server.listen(PORT, ()=>console.log(`Listening on port ${PORT}`))
 
 3. Chat.jsx에서 채팅창 만들기
+   const socket = io('http://localhost:8001');   
+   // 서버로 연결 요청. 연결되면 socket에 socket.id가 들어옴
+   const uid = useRef(null)  // socket.id 저장할 ref 변수 선언하고 useEffect()에서 저장함
+
+   useEffect(()=>{
+        uid.current = socket.id
+        console.log(socket.id)
+    }, [])
+
