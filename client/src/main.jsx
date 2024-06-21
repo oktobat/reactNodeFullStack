@@ -7,6 +7,7 @@ import App from './App.jsx'
 import '@/assets/css/reset.css'
 import { fetchNotice } from '@/store/board';
 import { GoogleOAuthProvider } from '@react-oauth/google';
+import { ThemeProvider } from '@/context/ThemeContext';
 
 const googleClientId = import.meta.env.VITE_GOOGLE_AUTH_CLIENT_ID;
 
@@ -20,7 +21,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <Provider store={store}>
       <BrowserRouter>
         <GoogleOAuthProvider clientId={googleClientId}>
-          <App />
+          <ThemeProvider>
+            <App />
+          </ThemeProvider>
         </GoogleOAuthProvider>
       </BrowserRouter>
     </Provider>

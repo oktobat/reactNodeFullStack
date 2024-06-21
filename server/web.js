@@ -14,7 +14,7 @@ const PORT = 8001
 // CORS 설정
 app.use(cors({
     origin: 'http://localhost:5173',
-    methods: ['GET', 'POST']
+    // methods: ['GET', 'POST', 'PUT', 'DELETE']
 }));
   
 app.use(express.json())           // 사용자의 json 요청을 처리하여 req.body 객체에 저장해줌
